@@ -20,7 +20,6 @@ import random
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from webpush.models import PushInformation
-from winotify import Notification, audio
 from django.http import FileResponse
 from webpush.models import SubscriptionInfo
 from django.utils import timezone
