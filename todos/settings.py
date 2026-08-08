@@ -24,7 +24,11 @@ SECRET_KEY = 'django-insecure-d_uvvt!fw=c)mo8o((1x3ffq3yge#t^8)uxij3s(@xr2vn$*ad
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://todos-vp8v.onrender.com/"]
+ALLOWED_HOSTS = [
+    "todos-vp8v.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ",
