@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<div style="color:white; text-align:center;">
+
+    <a style="color:white;">
+        After three attempts you will be locked out
+    </a>
+
+
+    <form class="login" method="post" style="color:white;">
+
+        {% csrf_token %}
+
+
+        <div class="make_todo_stack login_input">
+
+            <label for="id_username">
+                Username:
+            </label>
+
+            <input
+                type="text"
+                name="username"
+                id="id_username"
+                class="oval_input"
+                required
+            >
+
+        </div>
+
+
+
+        <div class="make_todo_stack login_input">
+
+            <label for="id_password">
+                Password:
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                id="id_password"
+                class="oval_input"
+                required
+            >
+
+        </div>
+
+
+
+
+        <button 
+            type="submit"
+            class="button"
+            style="margin:10px;"
+        >
+            Login
+        </button>
+
+
+    </form>
+
+
+
+    <div class="button-row">
+
+        <a 
+            href="{% url 'signup' %}"
+            class="button"
+            style="color:white;"
+        >
+            Sign up
+        </a>
+
+
+        <a 
+            href="{% url 'logout' %}"
+            class="button"
+            style="color:white;"
+        >
+            Logout
+        </a>
+
+    </div>
+
+
+</div>
+
+{% endblock %}

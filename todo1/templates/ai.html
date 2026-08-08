@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Ai{% endblock %}
+{% load static %}
+{% block content %}
+{% if user.is_authenticated %}
+
+<div class="chat_area">
+    <div class="ai_message_container">
+        <p class="ai_message" id="ai_message">{{ response }}
+        </p>
+    </div>
+</div>
+
+<div class="loader-overlay" id="loader">
+    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster">
+        <div class="wheel"></div>
+        <div class="hamster">
+            <div class="hamster__body">
+                <div class="hamster__head">
+                    <div class="hamster__ear"></div>
+                    <div class="hamster__eye"></div>
+                    <div class="hamster__nose"></div>
+                </div>
+                <div class="hamster__limb hamster__limb--fr"></div>
+                <div class="hamster__limb hamster__limb--fl"></div>
+                <div class="hamster__limb hamster__limb--br"></div>
+                <div class="hamster__limb hamster__limb--bl"></div>
+                <div class="hamster__tail"></div>
+            </div>
+        </div>
+        <div class="spoke"></div>
+    </div>
+    <p>AI is thinking...</p>
+</div>
+
+<form class="user_message" method="post">
+{% csrf_token %}
+<div class="user_message_container">
+    <textarea
+        class="user_message"
+        id="user_message"
+        name="user_message"
+        placeholder="Message ai_name_here..."
+        rows="1"></textarea>
+    <button class="user_message_send" type="submit">
+        ⮝
+    </button>
+</form>
+</div>
+<script>
+const form = document.querySelector(".user_message");
+const loader = document.getElementById("loader");
+const button = document.querySelector(".user_message_send");
+
+if (form && loader && button) {
+    form.addEventListener("submit", function() {
+        loader.style.display = "flex";
+        button.disabled = true;
+    });
+}
+
+const textarea = document.getElementById("user_message");
+
+if (textarea) {
+    textarea.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+    });
+}
+</script>
+
+
+{% else %}
+<h1>pls login or signup first</h1>
+{% endif %}
+{% endblock %}

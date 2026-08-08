@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% load webpush_notifications %}
+
+{% block title %} Sign Up {% endblock %}
+
+{% block content %}
+
+<div style="color:white;text-align:center;">
+
+<h2>Sign up</h2>
+
+<form method="post">
+
+{% csrf_token %}
+
+<p>
+<label for="id_username">Username:</label><br>
+<input type="text" name="username" id="id_username" class="oval_input" required>
+</p>
+
+<p>
+<label for="id_email">Email:</label><br>
+<input type="email" name="email" id="id_email" class="oval_input" required>
+</p>
+
+<p>
+<label for="id_password1">Password:</label><br>
+<input type="password" name="password1" id="id_password1" class="oval_input" required>
+</p>
+
+<p>
+<label for="id_password2">Password confirmation:</label><br>
+<input type="password" name="password2" id="id_password2" class="oval_input" required>
+</p>
+
+<button type="submit" class="button">
+Sign Up
+</button>
+
+</form>
+
+<h1 style="color: white; text-align: center;">pls turn on notifications in the accounts tab once you are signed in</h1>
+
+{% webpush_button %}
+
+{% webpush_header %}
+<script src="{% static 'webpush/webpush.js' %}"></script>
+
+</div>
+
+{% endblock %}

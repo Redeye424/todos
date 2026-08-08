@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'todo1/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Todos{% endblock %}</title>
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js")
+        .then(registration => {
+            console.log("Service Worker registered:", registration);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+}
+</script>
+</head>
+<body>
+    <div class="bg-pattern">
+    <!-- Pentagons -->
+    <span class="pentagon" style="--x:5%; --y:8%; --s:40px; --r:12deg;"></span>
+    <span class="pentagon" style="--x:18%; --y:30%; --s:70px; --r:-8deg;"></span>
+    <span class="pentagon" style="--x:35%; --y:15%; --s:55px; --r:25deg;"></span>
+    <span class="pentagon" style="--x:52%; --y:45%; --s:90px; --r:-18deg;"></span>
+    <span class="pentagon" style="--x:72%; --y:20%; --s:45px; --r:8deg;"></span>
+    <span class="pentagon" style="--x:82%; --y:65%; --s:75px; --r:-12deg;"></span>
+    <span class="pentagon" style="--x:10%; --y:22%; --s:35px; --r:-10deg;"></span>
+    <span class="pentagon" style="--x:14%; --y:68%; --s:60px; --r:18deg;"></span>
+    <span class="pentagon" style="--x:22%; --y:12%; --s:45px; --r:-22deg;"></span>
+    <span class="pentagon" style="--x:28%; --y:48%; --s:80px; --r:9deg;"></span>
+    <span class="pentagon" style="--x:33%; --y:75%; --s:50px; --r:-14deg;"></span>
+    <span class="pentagon" style="--x:40%; --y:28%; --s:65px; --r:16deg;"></span>
+    <span class="pentagon" style="--x:47%; --y:62%; --s:38px; --r:-6deg;"></span>
+    <span class="pentagon" style="--x:56%; --y:14%; --s:52px; --r:21deg;"></span>
+    <span class="pentagon" style="--x:63%; --y:52%; --s:72px; --r:-17deg;"></span>
+    <span class="pentagon" style="--x:68%; --y:82%; --s:52px; --r:11deg;"></span>
+    <span class="pentagon" style="--x:75%; --y:8%; --s:58px; --r:-25deg;"></span>
+    <span class="pentagon" style="--x:80%; --y:42%; --s:48px; --r:7deg;"></span>
+    <span class="pentagon" style="--x:87%; --y:78%; --s:66px; --r:-9deg;"></span>
+    <span class="pentagon" style="--x:92%; --y:55%; --s:36px; --r:13deg;"></span>
+    <span class="pentagon" style="--x:6%; --y:50%; --s:54px; --r:-19deg;"></span>
+    <span class="pentagon" style="--x:30%; --y:90%; --s:46px; --r:5deg;"></span>
+    <span class="pentagon" style="--x:58%; --y:35%; --s:84px; --r:-12deg;"></span>
+    <span class="pentagon" style="--x:95%; --y:25%; --s:40px; --r:20deg;"></span>
+    <!-- Stars -->
+    <span class="star" style="--x:12%; --y:15%; --size:2px;"></span>
+    <span class="star" style="--x:25%; --y:55%; --size:3px;"></span>
+    <span class="star" style="--x:45%; --y:10%; --size:2px;"></span>
+    <span class="star" style="--x:60%; --y:72%; --size:4px;"></span>
+    <span class="star" style="--x:78%; --y:38%; --size:2px;"></span>
+    <span class="star" style="--x:90%; --y:18%; --size:3px;"></span>
+    <span class="star" style="--x:8%; --y:82%; --size:2px;"></span>
+    <span class="star" style="--x:55%; --y:88%; --size:3px;"></span>
+    </div>
+
+
+    <main>
+    <div class="taskbar">
+        <div class="indicator"></div>
+            <button 
+                type="button"
+                style="font-weight: bold;" 
+                class="tab {% if active_page == 'home' %}active{% endif %}"
+                onclick="navigate(this, '{% url 'home' %}')">
+                Home
+            </button>
+
+
+            <button 
+                type="button"
+                style="font-weight: bold;" 
+                class="tab {% if active_page == 'ai' %}active{% endif %}"
+                onclick="navigate(this, '{% url 'ai' %}')">
+                ai
+            </button>
+
+
+            <button 
+                type="button"
+                style="font-weight: bold;" 
+                class="tab {% if active_page == 'accounts' %}active{% endif %}"
+                onclick="navigate(this, '{% url 'accounts' %}')">
+                account
+            </button>
+
+    </div>
+    <script>       
+        const indicator = document.querySelector('.indicator');
+
+        function navigate(button, url) {
+            const tabs = document.querySelectorAll('.tab');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+
+            indicator.style.width = button.offsetWidth + 'px';
+            indicator.style.transform =
+                `translateX(${button.offsetLeft - 8}px)`;
+
+            // Wait for animation to finish
+            setTimeout(() => {
+                window.location.href = url;
+            }, 350); // Match CSS transition time
+        }
+
+
+
+    window.addEventListener('load', () => {
+        const indicator = document.querySelector('.indicator');
+        const activeTab = document.querySelector('.tab.active');
+
+        if (activeTab) {
+            indicator.classList.add('no-anim'); // 👈 disable animation
+
+            indicator.style.width = activeTab.offsetWidth + 'px';
+            indicator.style.transform =
+                `translateX(${activeTab.offsetLeft - 8}px)`;
+
+            // force reflow then re-enable animation
+            requestAnimationFrame(() => {
+                indicator.classList.remove('no-anim');
+            });
+        }
+    });
+    </script>
+    </main>
+{% load static %}
+<script src="{% static 'todo1/webpush.js' %}"></script>
+{% block content %}{% endblock %}
+</body>
+</html>

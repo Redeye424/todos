@@ -1,0 +1,511 @@
+{% extends "base.html" %}
+{% block title %}Make Todo{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div style="color:white; text-align:center; margin-top:10px; margin-bottom:10px;">
+
+<h1>Welcome, {{ user.username }}!</h1>
+<h1>Make a new todo</h1>
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="todo_form_grid">
+
+
+    <!-- LEFT -->
+    <div class="todo_section">
+
+        <h2>Title</h2>
+
+        <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="oval_input"
+        >
+
+    </div>
+
+
+
+    <!-- RIGHT -->
+    <div class="todo_section">
+
+        <h2>Description</h2>
+
+        <textarea
+            id="description"
+            name="description"
+            rows="5"
+            class="oval_input">
+        </textarea>
+
+    </div>
+
+
+
+    <!-- LEFT -->
+    <div class="todo_section">
+
+        <h2>Urgency</h2>
+
+        <select
+            id="urgency"
+            name="urgency"
+            class="oval_input">
+
+            <option value="low">Low</option>
+
+            <option value="medium">Medium</option>
+
+            <option value="high">High</option>
+
+        </select>
+
+    </div>
+
+
+
+
+    <!-- RIGHT -->
+    <div class="todo_section">
+
+        <h2>
+            Does this todo have a due date?
+        </h2>
+
+
+        <input
+            type="checkbox"
+            id="due_date_check"
+            name="due_date_check"
+            class="oval_input"
+        >
+
+
+
+        <h2 id="due_date_title" class="hide_box">
+            Select a Due Date
+        </h2>
+
+
+        <div id="due_date_options" class="hide_box">
+
+            <input
+                type="date"
+                id="due_date"
+                name="due_date"
+                class="oval_input"
+            >
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- LEFT -->
+    <div class="todo_section">
+
+
+        <h2>
+            Does this todo repeat?
+        </h2>
+
+
+        <input
+            type="checkbox"
+            id="repeat_check"
+            name="repeat_check"
+            class="oval_input"
+        >
+
+
+
+        <h2 id="repeat_title" class="hide_box">
+            When does it repeat?
+        </h2>
+
+
+
+        <div id="repeat_gone" class="hide_box">
+
+
+            <select
+                id="repeat"
+                name="repeat"
+                class="oval_input">
+
+                <option value="">
+                    Select...
+                </option>
+
+                <option value="everyday">
+                    Everyday
+                </option>
+
+
+                <option value="weekly">
+                    Weekly
+                </option>
+
+
+            </select>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    <!-- RIGHT -->
+    <div class="todo_section">
+
+
+        <h2 id="day_title" class="hide_box">
+
+            Day of the week
+
+        </h2>
+
+
+
+        <div id="day_container" class="hide_box">
+
+
+            <select
+                id="day_of_week"
+                name="day_of_week"
+                class="oval_input">
+
+
+                <option value="monday">
+                    Monday
+                </option>
+
+
+                <option value="tuesday">
+                    Tuesday
+                </option>
+
+
+                <option value="wednesday">
+                    Wednesday
+                </option>
+
+
+                <option value="thursday">
+                    Thursday
+                </option>
+
+
+                <option value="friday">
+                    Friday
+                </option>
+
+
+                <option value="saturday">
+                    Saturday
+                </option>
+
+
+                <option value="sunday">
+                    Sunday
+                </option>
+
+
+            </select>
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- RIGHT -->
+    <div class="todo_section">
+
+
+        <h2>
+            When does it happen?
+        </h2>
+
+
+        <input
+            type="time"
+            id="time"
+            name="time"
+            class="oval_input"
+        >
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+<div style="margin-top:30px;">
+
+<button class="button" type="submit">
+    Create Todo
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+
+
+const dueCheck =
+document.getElementById("due_date_check");
+
+
+const repeatCheck =
+document.getElementById("repeat_check");
+
+
+
+const dueOptions =
+document.getElementById("due_date_options");
+
+
+const dueTitle =
+document.getElementById("due_date_title");
+
+
+
+const repeatOptions =
+document.getElementById("repeat_gone");
+
+
+const repeatTitle =
+document.getElementById("repeat_title");
+
+
+
+const repeatSelect =
+document.getElementById("repeat");
+
+
+
+const dayContainer =
+document.getElementById("day_container");
+
+
+const dayTitle =
+document.getElementById("day_title");
+
+
+
+
+
+function show(element){
+
+    element.classList.remove("hide_box");
+
+    element.classList.add("show_box");
+
+}
+
+
+
+function hide(element){
+
+    element.classList.remove("show_box");
+
+    element.classList.add("hide_box");
+
+}
+
+
+
+
+
+// Due date
+
+dueCheck.addEventListener("change", function(){
+
+
+if(this.checked){
+
+
+    show(dueOptions);
+
+    show(dueTitle);
+
+
+
+    repeatCheck.checked=false;
+
+
+    hide(repeatOptions);
+
+    hide(repeatTitle);
+
+
+    hide(dayContainer);
+
+    hide(dayTitle);
+
+
+    repeatSelect.value="";
+
+
+}
+
+else{
+
+
+    hide(dueOptions);
+
+    hide(dueTitle);
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+// Repeat
+
+repeatCheck.addEventListener("change", function(){
+
+
+if(this.checked){
+
+
+    show(repeatOptions);
+
+    show(repeatTitle);
+
+
+
+    dueCheck.checked=false;
+
+
+    hide(dueOptions);
+
+    hide(dueTitle);
+
+
+
+}
+
+else{
+
+
+    hide(repeatOptions);
+
+    hide(repeatTitle);
+
+
+    hide(dayContainer);
+
+    hide(dayTitle);
+
+
+    repeatSelect.value="";
+
+
+}
+
+
+
+});
+
+
+
+
+
+
+
+// Weekly
+
+repeatSelect.addEventListener("change", function(){
+
+
+if(this.value==="weekly"){
+
+
+    show(dayContainer);
+
+    show(dayTitle);
+
+
+
+}
+
+else{
+
+
+    hide(dayContainer);
+
+    hide(dayTitle);
+
+
+
+}
+
+
+
+});
+
+
+
+});
+
+
+</script>
+
+
+
+
+{% else %}
+
+<h1 style="color:white; text-align:center;">
+Please login
+</h1>
+
+
+{% endif %}
+
+{% endblock %}
