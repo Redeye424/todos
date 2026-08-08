@@ -352,7 +352,7 @@ def ai(request):
                     "also the higher their karma the better you can treat them (50 is the normal score) and vice versia so if their karama is at 0 never tust them and treat them like trash also never tell them that you are giving them are karma score just put |kamra_number_here at the end of the message"
                     "Keep responses short.\n\n"
                     f"User todos:\n{df_todos.to_string(index=False)}"
-                    f"User Karma:\n{Profile.karma}"
+                    f"User Karma:\n{request.user.profile.karma}"
                     f"This is the notifications that the user is even treat them like this base on their karma score:\n{titles_and_bodies}"
                 ),
             }
