@@ -153,9 +153,9 @@ def home(request):
         
         
         if request.user.profile.last_online < timezone.now() - timezone.timedelta(hours=24):
-            Profile.karma -= 3
-            Profile.save(update_fields=["karma"])
-        Profile.last_online = timezone.now()
+            request.user.profile.karma -= 3
+            request.user.profile.save(update_fields=["karma"])
+        request.user.profile.last_online = timezone.now()
         request.user.profile.save(update_fields=["last_online"])
         create_user_csv(user)
         csv_path = user_csv_path(user)
