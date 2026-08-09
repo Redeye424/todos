@@ -345,7 +345,7 @@ def ai(request):
         if not user_message:
             return render(request, "ai.html", {
                 "active_page": "ai",
-                "response": "You need to actually say something to Knox 😭"
+                "response": "hello how can I help with your todos today!"
             })
 
         ChatMessage.objects.create(
