@@ -2,7 +2,7 @@
 {% load static %}
 {% load webpush_notifications %}
 
-{% block title %} Sign Up {% endblock %}
+{% block title %}Sign Up{% endblock %}
 
 {% block content %}
 
@@ -11,36 +11,108 @@
 <h2>Sign up</h2>
 
 <form method="post">
+    {% csrf_token %}
 
-{% csrf_token %}
+    <p>
+        <label for="id_username">Username:</label><br>
+        <input
+            type="text"
+            name="username"
+            id="id_username"
+            class="oval_input"
+            value="{{ form.username.value|default:'' }}"
+            required
+        >
 
-<p>
-<label for="id_username">Username:</label><br>
-<input type="text" name="username" id="id_username" class="oval_input" required>
-</p>
+        {% if form.username.errors %}
+            <div style="color:#ff6b6b; margin-top:8px;">
+                {% for error in form.username.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </p>
 
-<p>
-<label for="id_email">Email:</label><br>
-<input type="email" name="email" id="id_email" class="oval_input" required>
-</p>
 
-<p>
-<label for="id_password1">Password:</label><br>
-<input type="password" name="password1" id="id_password1" class="oval_input" required>
-</p>
+    <p>
+        <label for="id_email">Email:</label><br>
+        <input
+            type="email"
+            name="email"
+            id="id_email"
+            class="oval_input"
+            value="{{ form.email.value|default:'' }}"
+            required
+        >
 
-<p>
-<label for="id_password2">Password confirmation:</label><br>
-<input type="password" name="password2" id="id_password2" class="oval_input" required>
-</p>
+        {% if form.email.errors %}
+            <div style="color:#ff6b6b; margin-top:8px;">
+                {% for error in form.email.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </p>
 
-<button type="submit" class="button">
-Sign Up
-</button>
+
+    <p>
+        <label for="id_password1">Password:</label><br>
+        <input
+            type="password"
+            name="password1"
+            id="id_password1"
+            class="oval_input"
+            required
+        >
+
+        {% if form.password1.errors %}
+            <div style="color:#ff6b6b; margin-top:8px;">
+                {% for error in form.password1.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </p>
+
+
+    <p>
+        <label for="id_password2">Password confirmation:</label><br>
+        <input
+            type="password"
+            name="password2"
+            id="id_password2"
+            class="oval_input"
+            required
+        >
+
+        {% if form.password2.errors %}
+            <div style="color:#ff6b6b; margin-top:8px;">
+                {% for error in form.password2.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </p>
+
+
+    {% if form.non_field_errors %}
+        <div style="color:#ff6b6b; margin:15px auto; max-width:500px;">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
+    <button type="submit" class="button">
+        Sign Up
+    </button>
 
 </form>
 
-<h1 style="color: white; text-align: center;">pls turn on notifications in the accounts tab once you are signed in</h1>
+<h1 style="color:white;text-align:center;">
+    pls turn on notifications in the accounts tab once you are signed in
+</h1>
 
 {% webpush_button %}
 

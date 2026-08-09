@@ -651,6 +651,9 @@ input[type="checkbox"].oval_input {
         width:95%;
     }
 
+    .Horn {
+    transform: rotate(180deg);
+  }
 }
 
 .login_input {
