@@ -332,12 +332,7 @@ def ai(request):
 
     try:
         client.list()
-    except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout):
-        return render(request, "ai.html", {
-            "active_page": "ai",
-            "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
-        })
-    except ConnectionError:
+    except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
         return render(request, "ai.html", {
             "active_page": "ai",
             "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
@@ -383,11 +378,17 @@ def ai(request):
                 "content": message.content
             })
 
+        try:
+            response = client.chat(
+                model="llama3.2",
+                messages=messages,
+            )
+        except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
+            return render(request, "ai.html", {
+                "active_page": "ai",
+                "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
+            })
 
-        response = client.chat(
-            model="llama3.2",
-            messages=messages,
-        )
 
         if "|" in response["message"]["content"]:
             response_to_user, karma = response["message"]["content"].split("|", 1)
