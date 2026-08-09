@@ -325,8 +325,10 @@ def ai(request):
     df_todos = pd.read_csv(user_csv_path(request.user))
 
     response_to_user = "hello how can I help with your todos today!"
-
-    client = Client(host="https://shawnvivobook.tail5fbbe2.ts.net")
+    client = Client(
+        host="https://shawnvivobook.tail5fbbe2.ts.net",
+                        timeout=10.0,
+                        )
 
     try:
         client.list()
@@ -335,7 +337,7 @@ def ai(request):
             "active_page": "ai",
             "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
         })
-
+    
     if request.method == "POST":
         user_message = request.POST.get("user_message")
 
