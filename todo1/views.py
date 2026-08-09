@@ -326,7 +326,7 @@ def ai(request):
 
     response_to_user = "hello how can I help with your todos today!"
 
-    client = Client(host="https://shawnvivbook.tail5fbbe2.ts.net")
+    client = Client(host="https://shawnvivobook.tail5fbbe2.ts.net")
 
     try:
         client.list()
