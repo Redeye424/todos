@@ -337,6 +337,11 @@ def ai(request):
             "active_page": "ai",
             "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
         })
+    except ConnectionError:
+        return render(request, "ai.html", {
+            "active_page": "ai",
+            "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
+        })
     
     if request.method == "POST":
         user_message = request.POST.get("user_message")
