@@ -1,4 +1,4 @@
 title,description,urgency,due_date_check,due_date,repeat_check,repeat,day_of_week,time,when_made,done
-THIS SHOULD COME BACK,,low,False,False,True,everyday,False,07:00,2026-07-23 11:18:39.676951,2026-08-07T19:05:53.038723
-dont remove,,medium,False,False,True,everyday,False,16:59,2026-07-23 16:00:24.237061,2026-07-27T19:33:27.541788
+THIS SHOULD COME BACK,,low,False,False,True,everyday,False,07:00,2026-07-23 11:18:39.676951,2026-08-08T19:27:13.165789
+dont remove,,medium,False,False,True,everyday,False,16:59,2026-07-23 16:00:24.237061,2026-08-08T19:27:14.952888
 test two,        ,high,True,2026-08-11,False,False,False,12:30,2026-08-07 19:24:45.057370,False

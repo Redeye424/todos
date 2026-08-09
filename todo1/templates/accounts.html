@@ -21,48 +21,110 @@
 
 <h2>turn on notifications here</h2>
 
-<button class="button" onclick="subscribeUser()">Enable Notifications</button>
-
+<button class="button" onclick="subscribeUser()">
+    Enable Notifications
+</button>
 
 <script>
 async function subscribeUser() {
 
-    const permission = await Notification.requestPermission();
-
-    if (permission !== "granted") {
-        alert("Notifications denied");
+    // Check if browser supports notifications
+    if (!("Notification" in window)) {
+        alert("Notifications are not supported by this browser.");
         return;
     }
 
-    const registration = await navigator.serviceWorker.ready;
+    // Check if browser supports Service Workers
+    if (!("serviceWorker" in navigator)) {
+        alert("Service workers are not supported by this browser.");
+        return;
+    }
 
-    const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-            "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ"
-        )
-    });
+    // iPhone/iPad detection
+    const isIOS =
+        /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    await fetch("/save-webpush/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        body: JSON.stringify(subscription)
-    });
+    // Check if running as a Home Screen app
+    const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
 
-    alert("Notifications enabled!");
+    // iPhone/iPad requires Home Screen app for Web Push
+    if (isIOS && !isStandalone) {
+        alert(
+            "On iPhone/iPad, first add Todos to your Home Screen.\n\n" +
+            "1. Tap the Share button in Safari.\n" +
+            "2. Tap 'Add to Home Screen'.\n" +
+            "3. Open Todos from your Home Screen.\n" +
+            "4. Come back here and press Enable Notifications."
+        );
+
+        return;
+    }
+
+    try {
+
+        // Ask for notification permission
+        const permission = await Notification.requestPermission();
+
+        if (permission !== "granted") {
+            alert("Notifications were not enabled.");
+            return;
+        }
+
+        // Get service worker
+        const registration = await navigator.serviceWorker.ready;
+
+        // Subscribe to push notifications
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+
+            applicationServerKey: urlBase64ToUint8Array(
+                "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ"
+            )
+        });
+
+        // Save subscription to Django
+        const response = await fetch("/save-webpush/", {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+
+            body: JSON.stringify(subscription)
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to save push subscription.");
+        }
+
+        alert("Notifications enabled!");
+
+    } catch (error) {
+
+        console.error("Notification error:", error);
+
+        alert(
+            "Something went wrong while enabling notifications.\n\n" +
+            error.message
+        );
+    }
 }
 
 
 function getCookie(name) {
+
     let value = null;
 
     document.cookie.split(";").forEach(cookie => {
+
         cookie = cookie.trim();
 
         if (cookie.startsWith(name + "=")) {
+
             value = decodeURIComponent(
                 cookie.substring(name.length + 1)
             );
@@ -74,6 +136,7 @@ function getCookie(name) {
 
 
 function urlBase64ToUint8Array(base64String) {
+
     const padding = "=".repeat(
         (4 - base64String.length % 4) % 4
     );

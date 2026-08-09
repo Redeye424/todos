@@ -12,7 +12,7 @@ from plyer import notification
 from webpush import send_user_notification
 import json
 from .forms import SignUpForm
-from .models import Profile
+from .models import Profile, PushSubscription
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -21,7 +21,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from webpush.models import PushInformation
 from django.http import FileResponse
-from webpush.models import SubscriptionInfo
+from webpush.models import PushInformation, SubscriptionInfo
 from django.utils import timezone
 from .scheduler import titles_and_bodies
 import httpx
@@ -38,22 +38,31 @@ def service_worker(request):
 @login_required
 def save_webpush(request):
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({
+            "error": "POST required"
+        }, status=400)
 
+    try:
         data = json.loads(request.body)
 
+        endpoint = data["endpoint"]
+        auth = data["keys"]["auth"]
+        p256dh = data["keys"]["p256dh"]
+
         subscription, created = SubscriptionInfo.objects.update_or_create(
-            endpoint=data["endpoint"],
+            endpoint=endpoint,
             defaults={
-                "auth": data["keys"]["auth"],
-                "p256dh": data["keys"]["p256dh"],
+                "auth": auth,
+                "p256dh": p256dh,
             }
         )
 
-        PushInformation.objects.update_or_create(
+        PushInformation.objects.get_or_create(
             user=request.user,
+            subscription=subscription,
             defaults={
-                "subscription": subscription
+                "group": None,
             }
         )
 
@@ -61,10 +70,12 @@ def save_webpush(request):
             "success": True
         })
 
-    return JsonResponse({
-        "error": "POST required"
-    }, status=400)
+    except (KeyError, json.JSONDecodeError) as e:
 
+        return JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=400)
 
 def send_todo_notification(user, head, body):
     send_user_notification(
@@ -72,6 +83,7 @@ def send_todo_notification(user, head, body):
         payload={
             "head": head,
             "body": body,
+            "icon": "/static/todo1/icons/icon-192.png",
         },
         ttl=3600
     )
@@ -344,7 +356,7 @@ def ai(request):
             {
                 "role": "system",
                 "content": (
-                    "You are a persuasive ai trying to convice people to do their todos. "
+                    "You are a persuasive ai trying to convice people to do their todos and your name is Knox. "
                     "Your goal is to convince the person to do their todos. "
                     "You will also put at the end of your message what you set their karma to from 0-100 whole numbers 100 being the best like this |kamra_number_here  kamra_number_here will just be a number and that is it and only ever use | for right in front of the Karma number not after it there can only be one | in the message at the end of the message and never in anywhere else also dont put anything after the |karma_number_here btw karma_number_here is just a number nothing more and rember only one |"
                     "You will decide their karma by looking at how many todos they still have to do, if they make excuses that don't line up with what they have said before and base on how their treat you and how they talk about stuff"
@@ -373,8 +385,8 @@ def ai(request):
         if "|" in response["message"]["content"]:
             response_to_user, karma = response["message"]["content"].split("|", 1)
             try:
-                Profile.karma = int(karma)
-                Profile.save(update_fields=["karma"])
+                request.user.profile.karma = int(karma)
+                request.user.profile.save(update_fields=["karma"])
             except (ValueError, TypeError):
                 pass
         else:

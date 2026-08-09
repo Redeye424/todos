@@ -3,6 +3,11 @@
 <head>
     <meta charset="utf-8">
     {% load static %}
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Todos">
+    <link rel="apple-touch-icon" href="{% static 'icons/icon-192.png' %}">
     <link rel="stylesheet" href="{% static 'todo1/style.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Todos{% endblock %}</title>

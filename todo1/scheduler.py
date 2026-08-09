@@ -317,7 +317,7 @@ def send_random_notifications():
             payload={
                 "head": head,
                 "body": body,
-                "icon": emoji_to_icon(emoji),
+                "icon": "/static/todo1/icons/icon-192.png",
                 "image": emoji_to_icon(emoji),
             },
             ttl=3600
