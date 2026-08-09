@@ -42,8 +42,8 @@
         name="user_message"
         placeholder="Message ai_name_here..."
         rows="1"></textarea>
-    <button class="user_message_send" type="submit">
-        ⮝
+    <button class="user_message_send" type="submit" aria-label="Send">
+        <span class="send_arrow"></span> 
     </button>
 </form>
 </div>
@@ -51,6 +51,12 @@
 const form = document.querySelector(".user_message");
 const loader = document.getElementById("loader");
 const button = document.querySelector(".user_message_send");
+
+document.querySelector(".user_message").addEventListener("submit", function () {
+    const button = this.querySelector(".user_message_send");
+
+    button.classList.add("sending");
+});
 
 if (form && loader && button) {
     form.addEventListener("submit", function() {
