@@ -89,59 +89,211 @@
         </div>
     {% endfor %}
     </div>
-    <div class="home_calendar">
 
-        <div class="label_oval">
-            {{ month_name }}
-        </div>
 
-        <div class="calendar_header">
-            <div>Sun</div>
-            <div>Mon</div>
-            <div>Tue</div>
-            <div>Wed</div>
-            <div>Thu</div>
-            <div>Fri</div>
-            <div>Sat</div>
-        </div>
 
-        <div class="calendar_grid">
+<div class="home_calendar">
 
-            {% for week in month_calendar %}
+    <div class="label_oval">
+        {{ month_name }}
+    </div>
 
-                {% for day in week %}
+    <div class="calendar_header">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
 
-                    {% if day.day == 0 %}
+    <div class="calendar_grid">
 
-                        <div class="calendar_day empty"></div>
+        {% for week in month_calendar %}
 
-                    {% else %}
+            {% for day in week %}
 
-                        <div class="calendar_day">
+                {% if day.day == 0 %}
 
-                            <div class="calendar_number">
-                                {{ day.day }}
+                    <div class="calendar_day empty"></div>
+
+                {% else %}
+
+                    <div
+                        class="calendar_day"
+                        onclick="showDayTodos(this)"
+                    >
+
+                        <div class="calendar_number">
+                            {{ day.day }}
+                        </div>
+
+                        {% for todo in day.todos %}
+
+                            <div class="calendar_todo">
+                                {{ todo.title }}
                             </div>
+
+                        {% endfor %}
+
+                        <!-- Hidden todo data for this day -->
+                        <div class="day_todo_data" style="display: none;">
 
                             {% for todo in day.todos %}
 
-                                <div class="calendar_todo">
-                                    {{ todo.title }}
-                                </div>
+                                <div
+                                    class="todo_data"
+                                    data-title="{{ todo.title|escape }}"
+                                    data-description="{{ todo.description|default:''|escape }}"
+                                    data-urgency="{{ todo.urgency|escape }}"
+                                ></div>
 
                             {% endfor %}
 
                         </div>
 
-                    {% endif %}
+                    </div>
 
-                {% endfor %}
+                {% endif %}
 
             {% endfor %}
 
-        </div>
+        {% endfor %}
 
     </div>
+
+</div>
+
+
+<!-- Day popup -->
+
+<div
+    id="dayTodoPopup"
+    class="day_todo_popup"
+    style="display: none;"
+>
+
+    <div class="day_todo_popup_content">
+
+        <button
+            class="day_todo_close"
+            onclick="closeDayTodos()"
+        >
+            ×
+        </button>
+
+        <h2 id="dayTodoTitle">
+            Todos
+        </h2>
+
+        <div id="dayTodoList"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showDayTodos(dayElement) {
+
+    const popup = document.getElementById("dayTodoPopup");
+    const title = document.getElementById("dayTodoTitle");
+    const list = document.getElementById("dayTodoList");
+
+    const dayNumber =
+        dayElement.querySelector(".calendar_number").textContent.trim();
+
+    const todoData =
+        dayElement.querySelectorAll(".todo_data");
+
+    title.textContent = "Todos for " + dayNumber;
+
+    list.innerHTML = "";
+
+    if (todoData.length === 0) {
+
+        const emptyMessage = document.createElement("p");
+
+        emptyMessage.textContent = "No todos for this day.";
+
+        list.appendChild(emptyMessage);
+
+    } else {
+
+        todoData.forEach(function(todo) {
+
+            const todoBox = document.createElement("div");
+
+            todoBox.className = "popup_todo";
+
+            const todoTitle = document.createElement("h3");
+
+            todoTitle.textContent =
+                todo.dataset.title;
+
+            todoBox.appendChild(todoTitle);
+
+
+            if (todo.dataset.description) {
+
+                const description =
+                    document.createElement("p");
+
+                description.textContent =
+                    todo.dataset.description;
+
+                todoBox.appendChild(description);
+
+            }
+
+
+            if (todo.dataset.urgency) {
+
+                const urgency =
+                    document.createElement("p");
+
+                urgency.textContent =
+                    "Urgency: " + todo.dataset.urgency;
+
+                todoBox.appendChild(urgency);
+
+            }
+
+
+            list.appendChild(todoBox);
+
+        });
+
+    }
+
+    popup.style.display = "flex";
+}
+
+
+function closeDayTodos() {
+
+    document.getElementById("dayTodoPopup").style.display = "none";
+
+}
+
+
+// Close popup when clicking outside it
+
+document.getElementById("dayTodoPopup").addEventListener(
+    "click",
+    function(event) {
+
+        if (event.target === this) {
+            closeDayTodos();
+        }
+
+    }
+);
+
+</script>
+
 
 
 
@@ -217,8 +369,20 @@
     <h2 style="color: white; text-align: center;">You have no todos!!!</h2>
     <h2 style="color: white; text-align: center;">Good Job</h2>
     <div style="text-align: center;"><button id="celebrateBtn" class="button" style="text-align: center;">🎉 Celebrate!</button></div>
-    <div id="leftHorn" class="horn">🎺</div>
-    <div id="rightHorn" class="horn">🎺</div>
+
+    <div id="leftHorn" class="horn left-horn">
+        <div class="horn-mouth"></div>
+        <div class="horn-body"></div>
+        <div class="horn-bell"></div>
+    </div>
+
+    <div id="rightHorn" class="horn right-horn">
+        <div class="horn-mouth"></div>
+        <div class="horn-body"></div>
+        <div class="horn-bell"></div>
+    </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 {% endif %}
@@ -226,8 +390,20 @@
     <h2 style="color: white; text-align: center;">You have no todos today!!!</h2>
     <h2 style="color: white; text-align: center;">Good Job</h2>
     <div style="text-align: center;"><button id="celebrateBtn" class="button" style="text-align: center;">🎉 Celebrate!</button></div>
-    <div id="leftHorn" class="horn">🎺</div>
-    <div id="rightHorn" class="horn">🎺</div>
+
+    <div id="leftHorn" class="horn left-horn">
+        <div class="horn-mouth"></div>
+        <div class="horn-body"></div>
+        <div class="horn-bell"></div>
+    </div>
+
+    <div id="rightHorn" class="horn right-horn">
+        <div class="horn-mouth"></div>
+        <div class="horn-body"></div>
+        <div class="horn-bell"></div>
+    </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 {% endif %}
@@ -258,6 +434,7 @@
 {% endif %}
 <script>
 const button = document.getElementById("celebrateBtn");
+
 const leftHorn = document.getElementById("leftHorn");
 const rightHorn = document.getElementById("rightHorn");
 
@@ -267,7 +444,7 @@ button.addEventListener("click", () => {
     leftHorn.classList.add("show");
     rightHorn.classList.add("show");
 
-    // Fire confetti from horn tips
+    // Fire confetti from the horns
     setTimeout(() => {
 
         confetti({
@@ -275,39 +452,41 @@ button.addEventListener("click", () => {
             spread: 70,
             angle: 20,
             startVelocity: 60,
-            origin:{
-                x:0.12,
-                y:0.5
+            origin: {
+                x: 0.12,
+                y: 0.5
             }
         });
 
         confetti({
-            particleCount:150,
-            spread:70,
-            angle:160,
-            startVelocity:60,
-            origin:{
-                x:0.88,
-                y:0.5
+            particleCount: 150,
+            spread: 70,
+            angle: 160,
+            startVelocity: 60,
+            origin: {
+                x: 0.88,
+                y: 0.5
             }
         });
 
-    },400);
+    }, 400);
 
-    // Extra burst from the middle
+
+    // Extra middle burst
     setTimeout(() => {
 
         confetti({
-            particleCount:200,
-            spread:120,
-            startVelocity:45,
-            origin:{
-                x:0.5,
-                y:0.6
+            particleCount: 200,
+            spread: 120,
+            startVelocity: 45,
+            origin: {
+                x: 0.5,
+                y: 0.6
             }
         });
 
-    },550);
+    }, 550);
+
 
     // Hide horns
     setTimeout(() => {
@@ -315,7 +494,7 @@ button.addEventListener("click", () => {
         leftHorn.classList.remove("show");
         rightHorn.classList.remove("show");
 
-    },1700);
+    }, 1700);
 
 });
 

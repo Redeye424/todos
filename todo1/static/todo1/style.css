@@ -728,6 +728,413 @@ input[type="checkbox"].oval_input {
   }
 
 
+/* Make calendar days clickable */
+
+.calendar_day:not(.empty) {
+    cursor: pointer;
+}
+
+
+/* Popup background */
+
+.day_todo_popup {
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.6);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+}
+
+
+/* Popup itself */
+
+
+.day_todo_popup_content {
+    position: relative;
+
+    width: 90%;
+    max-width: 450px;
+    max-height: 70vh;
+
+    overflow-y: auto;
+
+    /* Hide scrollbar */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer/Edge */
+    
+    background: #212121;
+    color: white;
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Chrome, Safari, Edge */
+.day_todo_popup_content::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* Close button */
+
+.day_todo_close {
+    position: absolute;
+
+    top: 10px;
+    right: 15px;
+
+    border: none;
+    background: none;
+
+    color: white;
+
+    font-size: 30px;
+
+    cursor: pointer;
+}
+
+
+/* Popup title */
+
+#dayTodoTitle {
+    text-align: center;
+
+    margin-top: 5px;
+    margin-bottom: 20px;
+}
+
+
+/* Individual todo */
+
+.popup_todo {
+    background: #1e90ff;
+
+    border-radius: 18px;
+
+    padding: 12px 16px;
+
+    margin-bottom: 10px;
+
+    text-align: left;
+}
+
+
+/* Todo title */
+
+.popup_todo h3 {
+    margin: 0 0 5px 0;
+}
+
+
+/* Todo description */
+
+.popup_todo p {
+    margin: 5px 0;
+}
+
+
+/* Don't let clicks on the todo trigger the calendar day */
+
+.popup_todo {
+    cursor: default;
+}
+
+/* =========================================
+   PARTY TRUMPET HORNS 🎺
+   ========================================= */
+
+.horn {
+    position: fixed;
+    width: 220px;
+    height: 120px;
+    top: 50%;
+
+    z-index: 9999;
+    pointer-events: none;
+
+    opacity: 0;
+
+    transition:
+        transform 0.5s cubic-bezier(.25, .8, .25, 1),
+        opacity 0.3s ease;
+}
+
+
+/* =========================================
+   LEFT HORN
+   ========================================= */
+
+.left-horn {
+    left: -250px;
+
+    transform:
+        translateY(-50%)
+        rotate(-8deg);
+}
+
+.left-horn.show {
+    opacity: 1;
+
+    transform:
+        translate(230px, -50%)
+        rotate(-8deg);
+}
+
+
+/* =========================================
+   RIGHT HORN
+   ========================================= */
+
+.right-horn {
+    right: -250px;
+
+    transform:
+        translateY(-50%)
+        rotate(8deg)
+        scaleX(-1);
+}
+
+.right-horn.show {
+    opacity: 1;
+
+    transform:
+        translate(-230px, -50%)
+        rotate(8deg)
+        scaleX(-1);
+}
+
+
+/* =========================================
+   MAIN TRUMPET BODY
+   ========================================= */
+
+.horn-body {
+    position: absolute;
+
+    left: 45px;
+    top: 45px;
+
+    width: 115px;
+    height: 25px;
+
+    background: linear-gradient(
+        to bottom,
+        #ffd84d 0%,
+        #f5b900 45%,
+        #d99600 100%
+    );
+
+    border-radius: 8px;
+
+    box-shadow:
+        inset 0 3px 0 rgba(255, 255, 255, .5),
+        inset 0 -4px 0 rgba(120, 70, 0, .25),
+        0 5px 12px rgba(0, 0, 0, .3);
+
+    transform: rotate(-3deg);
+}
+
+
+/* =========================================
+   TRUMPET BELL
+   ========================================= */
+
+.horn-bell {
+    position: absolute;
+
+    right: 0;
+    top: 22px;
+
+    width: 75px;
+    height: 70px;
+
+    background: linear-gradient(
+        135deg,
+        #ffe66a 0%,
+        #ffc400 45%,
+        #d99600 100%
+    );
+
+    border-radius: 15% 65% 65% 15%;
+
+    transform: rotate(-3deg);
+
+    box-shadow:
+        inset 5px 5px 0 rgba(255, 255, 255, .45),
+        inset -6px -6px 0 rgba(130, 80, 0, .2),
+        0 6px 15px rgba(0, 0, 0, .35);
+}
+
+
+/* =========================================
+   DARK BELL OPENING
+   ========================================= */
+
+.horn-bell::after {
+    content: "";
+
+    position: absolute;
+
+    right: 4px;
+    top: 10px;
+
+    width: 48px;
+    height: 50px;
+
+    background: radial-gradient(
+        circle,
+        #222 0%,
+        #111 65%,
+        #000 100%
+    );
+
+    border-radius: 50%;
+
+    box-shadow:
+        inset 0 4px 8px rgba(255, 255, 255, .1);
+}
+
+
+/* =========================================
+   MOUTHPIECE
+   ========================================= */
+
+.horn-mouth {
+    position: absolute;
+
+    left: 8px;
+    top: 42px;
+
+    width: 40px;
+    height: 28px;
+
+    background: linear-gradient(
+        to bottom,
+        #ffe66a,
+        #d99a00
+    );
+
+    border-radius: 5px 3px 3px 5px;
+
+    box-shadow:
+        inset 0 4px 0 rgba(255, 255, 255, .45),
+        0 4px 8px rgba(0, 0, 0, .3);
+
+    transform: rotate(-3deg);
+}
+
+
+/* =========================================
+   MOUTHPIECE TIP
+   ========================================= */
+
+.horn-mouth::before {
+    content: "";
+
+    position: absolute;
+
+    left: -12px;
+    top: 4px;
+
+    width: 14px;
+    height: 20px;
+
+    background: #e5ad18;
+
+    border-radius: 50% 0 0 50%;
+
+    box-shadow:
+        inset 2px 2px 0 rgba(255, 255, 255, .4);
+}
+
+
+/* =========================================
+   GOLD RINGS / VALVES
+   ========================================= */
+
+.horn-body::before,
+.horn-body::after {
+    content: "";
+
+    position: absolute;
+
+    top: -7px;
+
+    width: 10px;
+    height: 39px;
+
+    background: linear-gradient(
+        to right,
+        #c88b00,
+        #ffe45c,
+        #d99a00
+    );
+
+    border-radius: 4px;
+
+    box-shadow:
+        0 2px 5px rgba(0, 0, 0, .25);
+}
+
+
+/* First ring */
+
+.horn-body::before {
+    left: 28px;
+}
+
+
+/* Second ring */
+
+.horn-body::after {
+    left: 67px;
+}
+
+
+/* =========================================
+   EXTRA VALVES
+   ========================================= */
+
+.horn-bell::before {
+    content: "";
+
+    position: absolute;
+
+    left: -32px;
+    top: -3px;
+
+    width: 14px;
+    height: 18px;
+
+    background: #f2c12e;
+
+    border-radius: 5px;
+
+    box-shadow:
+        20px 0 #e0aa18,
+        40px 0 #d99b00;
+}
+
+
+/* =========================================
+   HIGHLIGHT
+   ========================================= */
+
+.horn-body {
+    overflow: visible;
+}
+
+
 
 
 
