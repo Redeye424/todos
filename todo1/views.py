@@ -8,7 +8,6 @@ import pandas as pd
 from django.contrib.auth.views import LoginView
 from ollama import Client
 from .models import ChatMessage
-from plyer import notification
 from webpush import send_user_notification
 import json
 from .forms import SignUpForm
