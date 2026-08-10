@@ -3,6 +3,128 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from webpush import send_user_notification
 from apscheduler.schedulers.background import BackgroundScheduler
+import csv
+from datetime import datetime
+from django.conf import settings
+
+def send_scheduled_todo_notifications():
+    now = timezone.localtime()
+
+    current_time = now.strftime("%H:%M")
+    today = now.date()
+
+    for user in User.objects.all():
+
+        csv_path = settings.USER_CSV_DIR / f"user_{user.id}.csv"
+
+        if not csv_path.exists():
+            continue
+
+        try:
+            with csv_path.open(
+                newline="",
+                encoding="utf-8"
+            ) as file:
+                todos = list(csv.DictReader(file))
+        except Exception:
+            continue
+
+        for todo in todos:
+
+            todo_time = todo.get("time", "").strip()
+
+            if not todo_time:
+                continue
+
+            # Only run at the todo's exact time
+            if todo_time != current_time:
+                continue
+
+            # Don't notify completed todos
+            if todo.get("done") not in ("False", "", None):
+                continue
+
+            # Check whether this todo should occur today
+            should_notify = False
+
+            # -------------------------
+            # DUE DATE
+            # -------------------------
+
+            if (
+                todo.get("due_date_check") == "True"
+                and todo.get("due_date") not in ("", "False", None)
+            ):
+                try:
+                    due_date = datetime.strptime(
+                        todo["due_date"],
+                        "%Y-%m-%d"
+                    ).date()
+
+                    should_notify = due_date == today
+
+                except ValueError:
+                    continue
+
+            # -------------------------
+            # EVERY DAY
+            # -------------------------
+
+            elif todo.get("repeat") == "everyday":
+                should_notify = True
+
+            # -------------------------
+            # WEEKLY
+            # -------------------------
+
+            elif todo.get("repeat") == "weekly":
+
+                should_notify = (
+                    todo.get("day_of_week", "").lower()
+                    == today.strftime("%A").lower()
+                )
+
+            # -------------------------
+            # MONTHLY
+            # -------------------------
+
+            elif todo.get("repeat") == "monthly":
+
+                should_notify = (
+                    todo.get("day_of_month", "") == str(today.day)
+                )
+
+            # -------------------------
+            # YEARLY
+            # -------------------------
+
+            elif todo.get("repeat") == "yearly":
+
+                should_notify = (
+                    todo.get("yearly_day", "") == str(today.day)
+                    and
+                    todo.get("yearly_month", "") == str(today.month)
+                )
+
+            if not should_notify:
+                continue
+
+            # -------------------------
+            # SEND NOTIFICATION
+            # -------------------------
+
+            send_user_notification(
+                user=user,
+                payload={
+                    "head": f"Todo: {todo.get('title', 'Todo')}",
+                    "body": todo.get(
+                        "description",
+                        "You have a todo to do!"
+                    ),
+                    "icon": "/static/todo1/icons/icon-192.png",
+                },
+                ttl=3600
+            )
 
 def emoji_to_icon(emoji):
     codepoints = "-".join(
@@ -330,6 +452,14 @@ def start_scheduler():
         send_random_notifications,
         "interval",
         minutes=15
+    )
+
+    scheduler.add_job(
+        send_scheduled_todo_notifications,
+        "interval",
+        minutes=1,
+        id="scheduled_todo_notifications",
+        replace_existing=True,
     )
 
     scheduler.start()

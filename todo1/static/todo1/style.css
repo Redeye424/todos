@@ -664,6 +664,69 @@ input[type="checkbox"].oval_input {
 }
 
 
+.home_calendar {
+    width: 95%;
+    max-width: 1100px;
+    margin: 50px auto;
+}
+
+.calendar_header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.calendar_header div {
+    background: #1e90ff;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.calendar_grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar_day {
+    min-height: 120px;
+    background: gray;
+    border-radius: 18px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.calendar_day.empty {
+    background: transparent;
+}
+
+.calendar_number {
+    color: #212121;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.calendar_todo {
+    background: #1e90ff;
+    color: white;
+    border-radius: 12px;
+    padding: 6px 9px;
+    margin-top: 5px;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home_calendar .label_oval {
+   margin-bottom: 20px; 
+  }
+
 
 
 

@@ -25,6 +25,34 @@
                 {% if todo.repeat_check == "True" %}
                     {% if todo.day_of_week != "False"%}
                         <h2>{{ todo.repeat }} on {{ todo.day_of_week }}</h2>
+                    {% elif todo.day_of_month != "False"%}
+                        <h2>{{ todo.repeat }} on {{ todo.day_of_month }}</h2>
+                    {% elif todo.yearly_day and todo.yearly_month != "False"%}
+                        {% if todo.yearly_month == "1" %}
+                            <h2>{{ todo.repeat }} on January {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "2" %}
+                            <h2>{{ todo.repeat }} on February {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "3" %}
+                            <h2>{{ todo.repeat }} on March {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "4" %}
+                            <h2>{{ todo.repeat }} on April {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "5" %}
+                            <h2>{{ todo.repeat }} on May {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "6" %}
+                            <h2>{{ todo.repeat }} on June {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "7" %}
+                            <h2>{{ todo.repeat }} on July {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "8" %}
+                            <h2>{{ todo.repeat }} on August {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "9" %}
+                            <h2>{{ todo.repeat }} on September {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "10" %}
+                            <h2>{{ todo.repeat }} on October {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "11" %}
+                            <h2>{{ todo.repeat }} on November {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "12" %}
+                            <h2>{{ todo.repeat }} on December {{ todo.yearly_day }}</h2>
+                        {% endif %}
                     {% endif %}
                     {% if todo.repeat == "everyday" %}
                         <h2>repeats {{ todo.repeat }}</h2>
@@ -61,6 +89,62 @@
         </div>
     {% endfor %}
     </div>
+    <div class="home_calendar">
+
+        <div class="label_oval">
+            {{ month_name }}
+        </div>
+
+        <div class="calendar_header">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <div class="calendar_grid">
+
+            {% for week in month_calendar %}
+
+                {% for day in week %}
+
+                    {% if day.day == 0 %}
+
+                        <div class="calendar_day empty"></div>
+
+                    {% else %}
+
+                        <div class="calendar_day">
+
+                            <div class="calendar_number">
+                                {{ day.day }}
+                            </div>
+
+                            {% for todo in day.todos %}
+
+                                <div class="calendar_todo">
+                                    {{ todo.title }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
 
     <div class="label_oval">all todos</div>
     <div class="oval-container_todos_home">
@@ -79,6 +163,34 @@
                 {% if todo.repeat_check == "True" %}
                     {% if todo.day_of_week != "False"%}
                         <h2>{{ todo.repeat }} on {{ todo.day_of_week }}</h2>
+                    {% elif todo.day_of_month != "False"%}
+                        <h2>{{ todo.repeat }} on {{ todo.day_of_month }}</h2>
+                    {% elif todo.yearly_day and todo.yearly_month != "False"%}
+                        {% if todo.yearly_month == "1" %}
+                            <h2>{{ todo.repeat }} on January {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "2" %}
+                            <h2>{{ todo.repeat }} on February {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "3" %}
+                            <h2>{{ todo.repeat }} on March {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "4" %}
+                            <h2>{{ todo.repeat }} on April {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "5" %}
+                            <h2>{{ todo.repeat }} on May {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "6" %}
+                            <h2>{{ todo.repeat }} on June {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "7" %}
+                            <h2>{{ todo.repeat }} on July {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "8" %}
+                            <h2>{{ todo.repeat }} on August {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "9" %}
+                            <h2>{{ todo.repeat }} on September {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "10" %}
+                            <h2>{{ todo.repeat }} on October {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "11" %}
+                            <h2>{{ todo.repeat }} on November {{ todo.yearly_day }}</h2>
+                        {% elif todo.yearly_month == "12" %}
+                            <h2>{{ todo.repeat }} on December {{ todo.yearly_day }}</h2>
+                        {% endif %}
                     {% endif %}
                     {% if todo.repeat == "everyday" %}
                         <h2>repeats {{ todo.repeat }}</h2>

@@ -154,9 +154,16 @@
                     Everyday
                 </option>
 
-
                 <option value="weekly">
                     Weekly
+                </option>
+
+                <option value="monthly">
+                    Monthly
+                </option>
+
+                <option value="yearly">
+                    Yearly
                 </option>
 
 
@@ -234,6 +241,69 @@
 
         </div>
 
+    
+        <div id="monthly_options" class="hide_box">
+
+            <h2>
+                Day of the month
+            </h2>
+
+            <input
+                type="number"
+                id="day_of_month"
+                name="day_of_month"
+                min="1"
+                max="31"
+                placeholder="1 - 31"
+                class="oval_input"
+            >
+
+        </div>
+
+
+        <!-- YEARLY -->
+        <div id="yearly_options" class="hide_box">
+
+            <h2>
+                Month
+            </h2>
+
+            <select
+                id="month"
+                name="month"
+                class="oval_input">
+
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+
+            </select>
+
+
+            <h2>
+                Day
+            </h2>
+
+            <input
+                type="number"
+                id="yearly_day"
+                name="yearly_day"
+                min="1"
+                max="31"
+                placeholder="1 - 31"
+                class="oval_input"
+            >
+
+        </div>
 
     </div>
 
@@ -284,218 +354,88 @@
 
 
 <script>
-
-document.addEventListener("DOMContentLoaded", function(){
-
-
-
-const dueCheck =
-document.getElementById("due_date_check");
-
-
-const repeatCheck =
-document.getElementById("repeat_check");
-
-
-
-const dueOptions =
-document.getElementById("due_date_options");
-
-
-const dueTitle =
-document.getElementById("due_date_title");
-
-
-
-const repeatOptions =
-document.getElementById("repeat_gone");
-
-
-const repeatTitle =
-document.getElementById("repeat_title");
-
-
-
-const repeatSelect =
-document.getElementById("repeat");
-
-
-
-const dayContainer =
-document.getElementById("day_container");
-
-
-const dayTitle =
-document.getElementById("day_title");
-
-
-
-
-
-function show(element){
-
-    element.classList.remove("hide_box");
-
-    element.classList.add("show_box");
-
-}
-
-
-
-function hide(element){
-
-    element.classList.remove("show_box");
-
-    element.classList.add("hide_box");
-
-}
-
-
-
-
-
-// Due date
-
-dueCheck.addEventListener("change", function(){
-
-
-if(this.checked){
-
-
-    show(dueOptions);
-
-    show(dueTitle);
-
-
-
-    repeatCheck.checked=false;
-
-
-    hide(repeatOptions);
-
-    hide(repeatTitle);
-
-
-    hide(dayContainer);
-
-    hide(dayTitle);
-
-
-    repeatSelect.value="";
-
-
-}
-
-else{
-
-
-    hide(dueOptions);
-
-    hide(dueTitle);
-
-
-}
-
-
+const dueDateCheck = document.getElementById("due_date_check");
+const dueDateTitle = document.getElementById("due_date_title");
+const dueDateOptions = document.getElementById("due_date_options");
+
+const repeatCheck = document.getElementById("repeat_check");
+const repeatTitle = document.getElementById("repeat_title");
+const repeatGone = document.getElementById("repeat_gone");
+const repeatSelect = document.getElementById("repeat");
+
+const dayTitle = document.getElementById("day_title");
+const dayContainer = document.getElementById("day_container");
+
+const monthlyOptions = document.getElementById("monthly_options");
+const yearlyOptions = document.getElementById("yearly_options");
+
+
+// Due date logic
+dueDateCheck.addEventListener("change", function () {
+
+    if (dueDateCheck.checked) {
+        dueDateTitle.classList.remove("hide_box");
+        dueDateOptions.classList.remove("hide_box");
+    } else {
+        dueDateTitle.classList.add("hide_box");
+        dueDateOptions.classList.add("hide_box");
+    }
 
 });
 
 
+// Repeat logic
+repeatCheck.addEventListener("change", function () {
 
+    if (repeatCheck.checked) {
+        repeatTitle.classList.remove("hide_box");
+        repeatGone.classList.remove("hide_box");
+    } else {
+        repeatTitle.classList.add("hide_box");
+        repeatGone.classList.add("hide_box");
 
-
-
-// Repeat
-
-repeatCheck.addEventListener("change", function(){
-
-
-if(this.checked){
-
-
-    show(repeatOptions);
-
-    show(repeatTitle);
-
-
-
-    dueCheck.checked=false;
-
-
-    hide(dueOptions);
-
-    hide(dueTitle);
-
-
-
-}
-
-else{
-
-
-    hide(repeatOptions);
-
-    hide(repeatTitle);
-
-
-    hide(dayContainer);
-
-    hide(dayTitle);
-
-
-    repeatSelect.value="";
-
-
-}
-
-
+        dayTitle.classList.add("hide_box");
+        dayContainer.classList.add("hide_box");
+        monthlyOptions.classList.add("hide_box");
+        yearlyOptions.classList.add("hide_box");
+    }
 
 });
 
 
+// Repeat type logic
+repeatSelect.addEventListener("change", function () {
+
+    dayTitle.classList.add("hide_box");
+    dayContainer.classList.add("hide_box");
+
+    monthlyOptions.classList.add("hide_box");
+    yearlyOptions.classList.add("hide_box");
 
 
+    if (repeatSelect.value === "weekly") {
+
+        dayTitle.classList.remove("hide_box");
+        dayContainer.classList.remove("hide_box");
+
+    }
 
 
+    else if (repeatSelect.value === "monthly") {
 
-// Weekly
+        monthlyOptions.classList.remove("hide_box");
 
-repeatSelect.addEventListener("change", function(){
-
-
-if(this.value==="weekly"){
+    }
 
 
-    show(dayContainer);
+    else if (repeatSelect.value === "yearly") {
 
-    show(dayTitle);
+        yearlyOptions.classList.remove("hide_box");
 
-
-
-}
-
-else{
-
-
-    hide(dayContainer);
-
-    hide(dayTitle);
-
-
-
-}
-
-
+    }
 
 });
-
-
-
-});
-
-
 </script>
-
 
 
 

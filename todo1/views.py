@@ -26,6 +26,7 @@ from django.utils import timezone
 from .scheduler import titles_and_bodies
 import httpx
 import django.http
+import calendar
 
 def service_worker(request):
     response = FileResponse(
@@ -97,6 +98,9 @@ fieldnames = [
     "repeat_check",
     "repeat",
     "day_of_week",
+    "day_of_month",
+    "yearly_day",
+    "yearly_month",
     "time",
     "when_made",
     "done"
@@ -114,7 +118,7 @@ def create_user_csv(User):
     if not path.exists():
         with path.open('w', newline='', encoding='utf-8') as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(['title', 'description', 'urgency', 'due_date_check', 'due_date', 'repeat_check', 'repeat', 'day_of_week', 'time', 'when_made', 'done'])
+            writer.writerow(['title', 'description', 'urgency', 'due_date_check', 'due_date', 'repeat_check', 'repeat', 'day_of_week',"day_of_month", "yearly_day", "yearly_month", 'time', 'when_made', 'done'])
 
 class CustomLoginView(LoginView):
     template_name = "registration/login.html"
@@ -159,28 +163,46 @@ def signup(request):
 
 def home(request):
     todos = []
+    todays_todos = []
+    calendar_todos = {}
+    month_calendar = []
+    month_name = ""
+    csv_path = None
+
     user = request.user
-    
+
     if user.is_authenticated:
-        
-        
+
+        # -------------------------
+        # UPDATE LAST ONLINE
+        # -------------------------
+
         if request.user.profile.last_online < timezone.now() - timezone.timedelta(hours=24):
             request.user.profile.karma -= 3
             request.user.profile.save(update_fields=["karma"])
+
         request.user.profile.last_online = timezone.now()
         request.user.profile.save(update_fields=["last_online"])
-        create_user_csv(user)
-        csv_path = user_csv_path(user)
 
+        # -------------------------
+        # LOAD TODOS
+        # -------------------------
+
+        csv_path = user_csv_path(user)
 
         with open(csv_path, newline='', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             todos = list(reader)
 
+        # -------------------------
+        # HANDLE MARK AS DONE / REMOVE
+        # -------------------------
+
         line_number = request.POST.get("line_number")
         repeat_not_remove = request.POST.get("repeat_not_remove")
 
         if line_number is not None:
+
             try:
                 line_number = int(line_number)
             except ValueError:
@@ -189,83 +211,360 @@ def home(request):
             if line_number is not None:
 
                 if repeat_not_remove == "True":
+
                     if 0 <= line_number < len(todos):
-                        request.user.profile.karma += int(1)
+
+                        request.user.profile.karma += 1
                         request.user.profile.save(update_fields=["karma"])
+
                         todos[line_number]["done"] = datetime.now().isoformat()
 
-
                         with open(csv_path, "w", newline="", encoding="utf-8") as file:
-                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                            writer = csv.DictWriter(
+                                file,
+                                fieldnames=fieldnames
+                            )
                             writer.writeheader()
                             writer.writerows(todos)
 
                 else:
+
                     if 0 <= line_number < len(todos):
+
                         todos.pop(line_number)
-                        request.user.profile.karma += int(3)
+
+                        request.user.profile.karma += 3
                         request.user.profile.save(update_fields=["karma"])
 
                         with open(csv_path, "w", newline="", encoding="utf-8") as file:
-                            writer = csv.DictWriter(file, fieldnames=fieldnames)
+                            writer = csv.DictWriter(
+                                file,
+                                fieldnames=fieldnames
+                            )
                             writer.writeheader()
                             writer.writerows(todos)
 
                 return redirect("home")
 
+        # -------------------------
+        # ADD LINE NUMBERS
+        # -------------------------
+
         for index, todo in enumerate(todos):
             todo["line_number"] = index
 
-        todays_todos = []
+        today = date.today()
+
+        # =====================================================
+        # CURRENT AND OVERDUE TODOS
+        # =====================================================
 
         for todo in todos:
 
-            if todo["due_date_check"] == "True":
-                due_date = datetime.strptime(todo["due_date"], "%Y-%m-%d").date()
+            # -------------------------
+            # DUE DATE
+            # -------------------------
 
-                if due_date <= date.today():
+            if (
+                todo["due_date_check"] == "True"
+                and todo["due_date"] != "False"
+                and todo["due_date"] != ""
+            ):
+
+                due_date = datetime.strptime(
+                    todo["due_date"],
+                    "%Y-%m-%d"
+                ).date()
+
+                if due_date <= today:
                     todays_todos.append(todo)
-                    continue
 
+                continue
+
+            # -------------------------
+            # EVERY DAY
+            # -------------------------
 
             if todo["repeat"] == "everyday":
+
                 done = todo["done"]
 
-                if done == "False":
+                if done == "False" or done == "":
                     todays_todos.append(todo)
 
                 else:
-                    done = datetime.fromisoformat(done)
+                    try:
+                        done_date = datetime.fromisoformat(done).date()
 
-                    if datetime.now() - done >= timedelta(days=1):
+                        if done_date < today:
+                            todays_todos.append(todo)
+
+                    except ValueError:
+                        # If the done value is corrupted,
+                        # show the todo rather than hiding it.
                         todays_todos.append(todo)
 
+            # -------------------------
+            # WEEKLY
+            # -------------------------
 
-            elif todo["day_of_week"] != "False":
-                done = todo["done"]
+            elif todo["repeat"] == "weekly":
 
-                if done == "False":
-                    if date.today().strftime("%A").lower() == todo["day_of_week"]:
+                if todo["day_of_week"] == today.strftime("%A").lower():
+
+                    done = todo["done"]
+
+                    if done == "False" or done == "":
                         todays_todos.append(todo)
 
-                else:
-                    done = datetime.fromisoformat(done)
+                    else:
+                        try:
+                            done_date = datetime.fromisoformat(done).date()
+
+                            if done_date < today:
+                                todays_todos.append(todo)
+
+                        except ValueError:
+                            todays_todos.append(todo)
+
+            # -------------------------
+            # MONTHLY
+            # -------------------------
+
+            elif todo["repeat"] == "monthly":
+
+                if todo["day_of_month"] == str(today.day):
+
+                    done = todo["done"]
+
+                    if done == "False" or done == "":
+                        todays_todos.append(todo)
+
+                    else:
+                        try:
+                            done_date = datetime.fromisoformat(done).date()
+
+                            if done_date < today:
+                                todays_todos.append(todo)
+
+                        except ValueError:
+                            todays_todos.append(todo)
+
+            # -------------------------
+            # YEARLY
+            # -------------------------
+
+            elif todo["repeat"] == "yearly":
+
+                if (
+                    todo["yearly_day"] == str(today.day)
+                    and
+                    todo["yearly_month"] == str(today.month)
+                ):
+
+                    done = todo["done"]
+
+                    if done == "False" or done == "":
+                        todays_todos.append(todo)
+
+                    else:
+                        try:
+                            done_date = datetime.fromisoformat(done).date()
+
+                            if done_date < today:
+                                todays_todos.append(todo)
+
+                        except ValueError:
+                            todays_todos.append(todo)
+
+        # =====================================================
+        # CALENDAR
+        # =====================================================
+
+        month_name = today.strftime("%B")
+
+        # -------------------------
+        # FIND TODOS FOR EACH DAY
+        # -------------------------
+
+        for todo in todos:
+
+            # -------------------------
+            # DUE DATE
+            # -------------------------
+
+            if (
+                todo["due_date_check"] == "True"
+                and todo["due_date"] != "False"
+                and todo["due_date"] != ""
+            ):
+
+                due_date = datetime.strptime(
+                    todo["due_date"],
+                    "%Y-%m-%d"
+                ).date()
+
+                if (
+                    due_date.year == today.year
+                    and due_date.month == today.month
+                ):
+                    calendar_todos.setdefault(
+                        due_date.day,
+                        []
+                    ).append(todo)
+
+            # -------------------------
+            # EVERY DAY
+            # -------------------------
+
+            if todo["repeat"] == "everyday":
+
+                for day in range(
+                    1,
+                    calendar.monthrange(
+                        today.year,
+                        today.month
+                    )[1] + 1
+                ):
+
+                    calendar_todos.setdefault(
+                        day,
+                        []
+                    ).append(todo)
+
+            # -------------------------
+            # WEEKLY
+            # -------------------------
+
+            elif todo["repeat"] == "weekly":
+
+                wanted_day = todo["day_of_week"]
+
+                for day in range(
+                    1,
+                    calendar.monthrange(
+                        today.year,
+                        today.month
+                    )[1] + 1
+                ):
+
+                    current_date = date(
+                        today.year,
+                        today.month,
+                        day
+                    )
+
+                    if current_date.strftime("%A").lower() == wanted_day:
+
+                        calendar_todos.setdefault(
+                            day,
+                            []
+                        ).append(todo)
+
+            # -------------------------
+            # MONTHLY
+            # -------------------------
+
+            elif todo["repeat"] == "monthly":
+
+                if todo["day_of_month"] != "False":
+
+                    day = int(todo["day_of_month"])
+
+                    if day <= calendar.monthrange(
+                        today.year,
+                        today.month
+                    )[1]:
+
+                        calendar_todos.setdefault(
+                            day,
+                            []
+                        ).append(todo)
+
+            # -------------------------
+            # YEARLY
+            # -------------------------
+
+            elif todo["repeat"] == "yearly":
+
+                if (
+                    todo["yearly_day"] != "False"
+                    and
+                    todo["yearly_month"] != "False"
+                ):
+
+                    yearly_day = int(todo["yearly_day"])
+                    yearly_month = int(todo["yearly_month"])
 
                     if (
-                        date.today().strftime("%A").lower() == todo["day_of_week"]
-                        and datetime.now() - done >= timedelta(days=7)
+                        yearly_month == today.month
+                        and
+                        yearly_day <= calendar.monthrange(
+                            today.year,
+                            today.month
+                        )[1]
                     ):
-                        todays_todos.append(todo)
+
+                        calendar_todos.setdefault(
+                            yearly_day,
+                            []
+                        ).append(todo)
+
+        # -------------------------
+        # BUILD CALENDAR
+        # -------------------------
+
+        raw_calendar = calendar.Calendar(
+            firstweekday=6
+        ).monthdayscalendar(
+            today.year,
+            today.month
+        )
+
+        month_calendar = []
+
+        for week in raw_calendar:
+
+            calendar_week = []
+
+            for day in week:
+
+                if day == 0:
+
+                    calendar_week.append({
+                        "day": 0,
+                        "todos": []
+                    })
+
+                else:
+
+                    calendar_week.append({
+                        "day": day,
+                        "todos": calendar_todos.get(day, [])
+                    })
+
+            month_calendar.append(calendar_week)
+
+    # -------------------------
+    # NOT LOGGED IN
+    # -------------------------
+
     else:
         csv_path = None
         todays_todos = []
-
+        todos = []
+        calendar_todos = {}
+        month_calendar = []
+        month_name = ""
 
     return render(request, "home.html", {
         "csv_path": csv_path,
         "todos": todays_todos,
         "active_page": "home",
         "all_todos": todos,
+        "month_calendar": month_calendar,
+        "calendar_todos": calendar_todos,
+        "month_name": month_name,
     })
 
 
@@ -297,21 +596,48 @@ def make_todo(request):
         if repeat == "":
             repeat = False
         day_of_week = request.POST.get('day_of_week')
+        day_of_month = request.POST.get('day_of_month')
+        yearly_day = request.POST.get('yearly_day')
+        yearly_month = request.POST.get('month')
         if day_of_week == "":
             day_of_week = False
+        if day_of_month == "":
+            day_of_month = False
+        if yearly_day == "":
+            yearly_day = False
+        if yearly_month == "":
+            yearly_month = False
         if repeat == "everyday":
             day_of_week = False
+            day_of_month = False
+            yearly_day = False
+            yearly_month = False
+        elif repeat == "weekly":
+            day_of_month = False
+            yearly_day = False
+            yearly_month = False
+        elif repeat == "monthly":
+            day_of_week = False
+            yearly_day = False
+            yearly_month = False
+        elif repeat == "yearly":
+            day_of_week = False
+            day_of_month = False
         time = request.POST.get('time')
         when_made = datetime.now()
         done = False
         if due_date_check:
-            day_of_week = False
+            repeat_check = False
             repeat = False
+            day_of_week = False
+            day_of_month = False
+            yearly_day = False
+            yearly_month = False
         
         csv_path = user_csv_path(request.user)
         with csv_path.open('a', newline='', encoding='utf-8') as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow([title, description, urgency, due_date_check, due_date, repeat_check, repeat, day_of_week, time, when_made, done])
+            writer.writerow([title, description, urgency, due_date_check, due_date, repeat_check, repeat, day_of_week, day_of_month, yearly_day, yearly_month, time, when_made, done])
 
         return redirect('home')
     return render(request, 'make_todo.html', {
@@ -321,7 +647,7 @@ def make_todo(request):
 def ai(request):
     if not request.user.is_authenticated:
         return redirect("login")
-
+    create_user_csv(request.user)
     df_todos = pd.read_csv(user_csv_path(request.user))
 
     response_to_user = "hello how can I help with your todos today!"
