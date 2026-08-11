@@ -21,6 +21,7 @@
             id="id_username"
             class="oval_input"
             value="{{ form.username.value|default:'' }}"
+            autocomplete="username"
             required
         >
 
@@ -42,6 +43,7 @@
             id="id_email"
             class="oval_input"
             value="{{ form.email.value|default:'' }}"
+            autocomplete="email"
             required
         >
 
@@ -62,6 +64,7 @@
             name="password1"
             id="id_password1"
             class="oval_input"
+            autocomplete="new-password"
             required
         >
 
@@ -82,6 +85,7 @@
             name="password2"
             id="id_password2"
             class="oval_input"
+            autocomplete="new-password"
             required
         >
 

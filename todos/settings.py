@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "todos-vp8v.onrender.com",
+    "192.168.1.200",
     "localhost",
     "127.0.0.1",
 ]
