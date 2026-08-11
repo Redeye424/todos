@@ -6,11 +6,7 @@
 {% block content %}
 
 <div style="color:white;text-align:center;">
-
-<h1>info stuff</h1>
-
-<h2>sign out here</h2>
-
+<h2  style="padding-top: 15%;">logout here</h2>
 <form method="POST" action="{% url 'logout' %}">
     {% csrf_token %}
     <input type="hidden" name="action" value="logout">
@@ -18,13 +14,22 @@
         Logout
     </button>
 </form>
+<div id="notificationStuff" style="display: none;">
+    <h2>turn on notifications here</h2>
 
-<h2>turn on notifications here</h2>
-
-<button class="button" onclick="subscribeUser()">
-    Enable Notifications
-</button>
-
+    <button class="button" onclick="subscribeUser()">
+        Enable Notifications
+    </button>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if ("Notification" in window) {
+            if (Notification.permission !== "granted") {
+                document.getElementById("notificationStuff").style.display = "block";
+            }
+        }
+    });
+</script>
 <h2 style="text-align: center; display: none; color: white;" id="iphone_os_h2">
 Open the website in Safari.
 Tap the Share button (the square with the ↑ arrow).

@@ -2,13 +2,25 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
-{% if todos or all_todos %}
     <h1 style="color: white; text-align: center;">Try Our new ai and your new friend</h1>
     <h1 style="color: white; text-align: center;">Knox</h1>
     <form action="{% url 'ai' %}" method="post" style="text-align: center; margin-bottom: 20px;">
         {% csrf_token %}
         <button class="button" type="submit">ai</button>
     </form>
+    <h1 id="notificationWarning" style="color: white; text-align: center; display: none;">
+        pls turn on notifications on the accounts tab
+    </h1>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted") {
+                    document.getElementById("notificationWarning").style.display = "block";
+                }
+            }
+        });
+    </script>
+{% if todos or all_todos %}
     <div class="label_oval">current and over due todos</div>
     <div class="oval-container_todos_home">
     {% for todo in todos %}
@@ -389,62 +401,76 @@ document.getElementById("dayTodoPopup").addEventListener(
     {% csrf_token %}
     <button class="button" type="submit">Create Todo</button>
 </form>
-<h1 style="color: white; text-align: center;">pls turn on notifications on the accounts tab</h1>
 {% else %}
+
 {% load static %}
 
-<div class="knox-welcome">
+<div class="knox-home">
 
-    <div class="knox-welcome-card">
+    <div class="knox-home-card">
 
-        <div class="knox-logo-wrapper">
+        <!-- Logo -->
+        <div class="knox-home-logo">
             <img
                 src="{% static 'todo1/icons/icon-192.png' %}"
                 alt="Knox logo"
-                class="knox-logo"
             >
         </div>
 
-        <p class="knox-eyebrow">YOUR PERSONAL TODO ASSISTANT</p>
 
-        <h1 class="knox-title">
-            Hi, I'm Knox 👋
-        </h1>
+        <!-- Text -->
+        <div class="knox-home-content">
 
-        <p class="knox-subtitle">
-            Your personal AI assistant for getting things done.
-        </p>
+            <p class="knox-home-eyebrow">
+                OUR NEW AI
+            </p>
 
-        <p class="knox-description">
-            Got a lot on your plate? Need a little help staying organized?
-            Give Knox a shot and let's turn those todos into done-tos.
-        </p>
+            <h1>
+                Knox
+            </h1>
 
-        <div class="knox-actions">
+            <h2>
+                Join Knox and get your todos done
+                <span>or else...</span>
+            </h2>
 
-            <form action="{% url 'signup' %}" method="post">
-                {% csrf_token %}
-                <button class="button knox-button" type="submit">
-                    Get Started
-                </button>
-            </form>
+            <p class="knox-home-description">
+                Your new AI-powered todo companion.
+                Stay organized, get things done, and don't
+                make Knox come after you. 😈
+            </p>
 
-            <form action="{% url 'login' %}" method="post">
-                {% csrf_token %}
-                <button class="button knox-button knox-login-button" type="submit">
-                    I Already Have an Account
-                </button>
-            </form>
+
+            <div class="knox-home-buttons">
+
+                <form action="{% url 'signup' %}">
+                    {% csrf_token %}
+                    <button
+                        class="button"
+                        type="submit"
+                    >
+                        Join Now
+                    </button>
+                </form>
+
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <button
+                        class="button"
+                        type="submit"
+                    >
+                        Hop Back In
+                    </button>
+                </form>
+
+            </div>
 
         </div>
-
-        <p class="knox-footer">
-            Ready to get organized? Knox is ready when you are. ✨
-        </p>
 
     </div>
 
 </div>
+
 {% endif %}
 <script>
 const button = document.getElementById("celebrateBtn");

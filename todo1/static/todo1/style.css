@@ -849,295 +849,333 @@ input[type="checkbox"].oval_input {
     cursor: default;
 }
 
-/* =========================================
-   PARTY TRUMPET HORNS 🎺
-   ========================================= */
+@media screen and (max-width: 600px) {
 
-.horn {
-    position: fixed;
-    width: 220px;
-    height: 120px;
-    top: 50%;
+    .home_calendar {
+        width: 96%;
+        margin: 20px auto;
+        overflow: hidden;
+    }
 
-    z-index: 9999;
-    pointer-events: none;
+    /* Days of the week */
+    .calendar_header {
+        font-size: 10px;
+        gap: 2px;
+    }
 
-    opacity: 0;
+    /* Calendar itself */
+    .calendar_grid {
+        gap: 2px;
+        width: 100%;
+    }
 
-    transition:
-        transform 0.5s cubic-bezier(.25, .8, .25, 1),
-        opacity 0.3s ease;
+    /* Individual day */
+    .calendar_day {
+        min-width: 0;
+        min-height: 70px;
+        padding: 3px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* Date number */
+    .calendar_number {
+        font-size: 12px;
+        line-height: 1;
+        margin-bottom: 3px;
+    }
+
+    /* Todo names inside calendar */
+    .calendar_todo {
+        font-size: 7px;
+        line-height: 1.1;
+
+        padding: 2px 3px;
+        margin-top: 2px;
+
+        border-radius: 4px;
+
+        /* Keep long names from breaking the calendar */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 
-/* =========================================
-   LEFT HORN
-   ========================================= */
 
-.left-horn {
-    left: -250px;
-
-    transform:
-        translateY(-50%)
-        rotate(-8deg);
+.knox-home {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 25px;
+    box-sizing: border-box;
 }
 
-.left-horn.show {
-    opacity: 1;
+.knox-home-card {
+    width: min(1050px, 95vw);
 
-    transform:
-        translate(230px, -50%)
-        rotate(-8deg);
-}
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
+    gap: 70px;
 
-/* =========================================
-   RIGHT HORN
-   ========================================= */
+    background: transparent;
+    border: none;
+    box-shadow: none;
 
-.right-horn {
-    right: -250px;
-
-    transform:
-        translateY(-50%)
-        rotate(8deg)
-        scaleX(-1);
-}
-
-.right-horn.show {
-    opacity: 1;
-
-    transform:
-        translate(-230px, -50%)
-        rotate(8deg)
-        scaleX(-1);
+    padding: 30px;
+    box-sizing: border-box;
 }
 
 
-/* =========================================
-   MAIN TRUMPET BODY
-   ========================================= */
+.knox-home-logo {
+    flex: 0 0 330px;
 
-.horn-body {
-    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    left: 45px;
-    top: 45px;
+.knox-home-logo img {
+    width: 300px;
+    height: 300px;
 
-    width: 115px;
-    height: 25px;
+    object-fit: contain;
+    border-radius: 65px;
 
-    background: linear-gradient(
-        to bottom,
-        #ffd84d 0%,
-        #f5b900 45%,
-        #d99600 100%
-    );
+    filter:
+        drop-shadow(0 10px 25px rgba(0, 0, 0, 0.45))
+        drop-shadow(0 0 20px rgba(30, 144, 255, 0.15));
 
-    border-radius: 8px;
+    transition: transform 0.3s ease,
+                filter 0.3s ease;
+}
 
-    box-shadow:
-        inset 0 3px 0 rgba(255, 255, 255, .5),
-        inset 0 -4px 0 rgba(120, 70, 0, .25),
-        0 5px 12px rgba(0, 0, 0, .3);
+.knox-home-logo img:hover {
+    transform: translateY(-8px) rotate(-2deg);
 
-    transform: rotate(-3deg);
+    filter:
+        drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5))
+        drop-shadow(0 0 30px rgba(30, 144, 255, 0.35));
+}
+
+.knox-home-content {
+    flex: 1;
+    max-width: 600px;
+}
+
+.knox-home-eyebrow {
+    margin: 0 0 8px;
+
+    color: #8fc4eb;
+
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
 }
 
 
-/* =========================================
-   TRUMPET BELL
-   ========================================= */
+/* "Knox" */
 
-.horn-bell {
-    position: absolute;
+.knox-home-content h1 {
+    margin: 0;
 
-    right: 0;
-    top: 22px;
+    color: white;
 
-    width: 75px;
-    height: 70px;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 0.9;
+    font-weight: 800;
 
-    background: linear-gradient(
-        135deg,
-        #ffe66a 0%,
-        #ffc400 45%,
-        #d99600 100%
-    );
-
-    border-radius: 15% 65% 65% 15%;
-
-    transform: rotate(-3deg);
-
-    box-shadow:
-        inset 5px 5px 0 rgba(255, 255, 255, .45),
-        inset -6px -6px 0 rgba(130, 80, 0, .2),
-        0 6px 15px rgba(0, 0, 0, .35);
+    text-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.4);
 }
 
 
-/* =========================================
-   DARK BELL OPENING
-   ========================================= */
+/* Main slogan */
 
-.horn-bell::after {
-    content: "";
+.knox-home-content h2 {
+    margin: 25px 0 0;
 
-    position: absolute;
+    color: #e5edf5;
 
-    right: 4px;
-    top: 10px;
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+    line-height: 1.2;
+    font-weight: 700;
+}
 
-    width: 48px;
+.knox-home-content h2 span {
+    color: #1e90ff;
+}
+
+
+/* Description */
+
+.knox-home-description {
+    max-width: 500px;
+
+    margin: 18px 0 0;
+
+    color: #aebdcc;
+
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.knox-home-buttons {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+}
+
+.knox-home-buttons form {
+    margin: 0;
+}
+
+
+/* Both buttons */
+.knox-home-button {
+    min-width: 160px;
     height: 50px;
 
-    background: radial-gradient(
-        circle,
-        #222 0%,
-        #111 65%,
-        #000 100%
-    );
+    padding: 0 24px;
 
-    border-radius: 50%;
+    border-radius: 999px;
+    border: none;
+
+    box-sizing: border-box;
+
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: .5px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        filter .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* Join Now */
+.knox-home-button:not(.knox-home-login) {
+    background: #1e90ff !important;
+    color: white !important;
 
     box-shadow:
-        inset 0 4px 8px rgba(255, 255, 255, .1);
+        0 5px 15px rgba(30, 144, 255, 0.25);
 }
 
+.knox-home-button:not(.knox-home-login):hover {
+    background: #3498db !important;
 
-/* =========================================
-   MOUTHPIECE
-   ========================================= */
-
-.horn-mouth {
-    position: absolute;
-
-    left: 8px;
-    top: 42px;
-
-    width: 40px;
-    height: 28px;
-
-    background: linear-gradient(
-        to bottom,
-        #ffe66a,
-        #d99a00
-    );
-
-    border-radius: 5px 3px 3px 5px;
+    transform: translateY(-3px);
 
     box-shadow:
-        inset 0 4px 0 rgba(255, 255, 255, .45),
-        0 4px 8px rgba(0, 0, 0, .3);
-
-    transform: rotate(-3deg);
+        0 8px 22px rgba(30, 144, 255, 0.35);
 }
 
 
-/* =========================================
-   MOUTHPIECE TIP
-   ========================================= */
-
-.horn-mouth::before {
-    content: "";
-
-    position: absolute;
-
-    left: -12px;
-    top: 4px;
-
-    width: 14px;
-    height: 20px;
-
-    background: #e5ad18;
-
-    border-radius: 50% 0 0 50%;
+/* Hop Back In */
+.knox-home-login {
+    background: #b0b0b0 !important;
+    color: #212121 !important;
 
     box-shadow:
-        inset 2px 2px 0 rgba(255, 255, 255, .4);
+        0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+.knox-home-login:hover {
+    background: #c0c0c0 !important;
 
-/* =========================================
-   GOLD RINGS / VALVES
-   ========================================= */
+    color: #212121 !important;
 
-.horn-body::before,
-.horn-body::after {
-    content: "";
-
-    position: absolute;
-
-    top: -7px;
-
-    width: 10px;
-    height: 39px;
-
-    background: linear-gradient(
-        to right,
-        #c88b00,
-        #ffe45c,
-        #d99a00
-    );
-
-    border-radius: 4px;
+    transform: translateY(-3px);
 
     box-shadow:
-        0 2px 5px rgba(0, 0, 0, .25);
+        0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
+@media (max-width: 750px) {
 
-/* First ring */
+    .knox-home {
+        min-height: calc(100vh - 80px);
 
-.horn-body::before {
-    left: 28px;
+        padding: 30px 15px;
+    }
+
+    .knox-home-card {
+        flex-direction: column;
+
+        gap: 25px;
+
+        padding: 20px 10px;
+
+        text-align: center;
+    }
+
+    .knox-home-logo {
+        flex: none;
+    }
+
+    .knox-home-logo img {
+        width: 180px;
+        height: 180px;
+
+        border-radius: 40px;
+    }
+
+    .knox-home-content {
+        width: 100%;
+    }
+
+    .knox-home-eyebrow {
+        font-size: 12px;
+        letter-spacing: 3px;
+    }
+
+    .knox-home-content h1 {
+        font-size: 4.5rem;
+    }
+
+    .knox-home-content h2 {
+        margin-top: 18px;
+
+        font-size: 1.4rem;
+    }
+
+    .knox-home-description {
+        font-size: 0.95rem;
+
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .knox-home-buttons {
+        justify-content: center;
+
+        flex-direction: column;
+
+        width: 100%;
+    }
+
+    .knox-home-buttons form {
+        width: min(320px, 90%);
+    }
+
+    .knox-home-button {
+        width: 100%;
+    }
 }
-
-
-/* Second ring */
-
-.horn-body::after {
-    left: 67px;
-}
-
-
-/* =========================================
-   EXTRA VALVES
-   ========================================= */
-
-.horn-bell::before {
-    content: "";
-
-    position: absolute;
-
-    left: -32px;
-    top: -3px;
-
-    width: 14px;
-    height: 18px;
-
-    background: #f2c12e;
-
-    border-radius: 5px;
-
-    box-shadow:
-        20px 0 #e0aa18,
-        40px 0 #d99b00;
-}
-
-
-/* =========================================
-   HIGHLIGHT
-   ========================================= */
-
-.horn-body {
-    overflow: visible;
-}
-
-
-
-
-
 
 
 

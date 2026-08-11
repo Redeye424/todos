@@ -4,11 +4,16 @@
 {% block content %}
 
 <div style="color:white; text-align:center;">
-
-    <a style="color:white;">
-        After three attempts you will be locked out
-    </a>
-
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <a style="color:white;">
+                After three attempts you will be locked out
+            </a>
+            <p style="color: red;">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
 
     <form class="login" method="post" style="color:white;">
 

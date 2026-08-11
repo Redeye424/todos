@@ -172,10 +172,6 @@ def home(request):
 
     if user.is_authenticated:
 
-        # -------------------------
-        # UPDATE LAST ONLINE
-        # -------------------------
-
         if request.user.profile.last_online < timezone.now() - timezone.timedelta(hours=24):
             request.user.profile.karma -= 3
             request.user.profile.save(update_fields=["karma"])
@@ -183,19 +179,11 @@ def home(request):
         request.user.profile.last_online = timezone.now()
         request.user.profile.save(update_fields=["last_online"])
 
-        # -------------------------
-        # LOAD TODOS
-        # -------------------------
-
         csv_path = user_csv_path(user)
 
         with open(csv_path, newline='', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             todos = list(reader)
-
-        # -------------------------
-        # HANDLE MARK AS DONE / REMOVE
-        # -------------------------
 
         line_number = request.POST.get("line_number")
         repeat_not_remove = request.POST.get("repeat_not_remove")
@@ -245,24 +233,12 @@ def home(request):
 
                 return redirect("home")
 
-        # -------------------------
-        # ADD LINE NUMBERS
-        # -------------------------
-
         for index, todo in enumerate(todos):
             todo["line_number"] = index
 
         today = date.today()
 
-        # =====================================================
-        # CURRENT AND OVERDUE TODOS
-        # =====================================================
-
         for todo in todos:
-
-            # -------------------------
-            # DUE DATE
-            # -------------------------
 
             if (
                 todo["due_date_check"] == "True"
@@ -280,10 +256,6 @@ def home(request):
 
                 continue
 
-            # -------------------------
-            # EVERY DAY
-            # -------------------------
-
             if todo["repeat"] == "everyday":
 
                 done = todo["done"]
@@ -299,13 +271,8 @@ def home(request):
                             todays_todos.append(todo)
 
                     except ValueError:
-                        # If the done value is corrupted,
-                        # show the todo rather than hiding it.
                         todays_todos.append(todo)
 
-            # -------------------------
-            # WEEKLY
-            # -------------------------
 
             elif todo["repeat"] == "weekly":
 
@@ -326,10 +293,6 @@ def home(request):
                         except ValueError:
                             todays_todos.append(todo)
 
-            # -------------------------
-            # MONTHLY
-            # -------------------------
-
             elif todo["repeat"] == "monthly":
 
                 if todo["day_of_month"] == str(today.day):
@@ -348,10 +311,6 @@ def home(request):
 
                         except ValueError:
                             todays_todos.append(todo)
-
-            # -------------------------
-            # YEARLY
-            # -------------------------
 
             elif todo["repeat"] == "yearly":
 
@@ -376,21 +335,31 @@ def home(request):
                         except ValueError:
                             todays_todos.append(todo)
 
-        # =====================================================
-        # CALENDAR
-        # =====================================================
+        if todays_todos:
+            urgency_order = {
+                "high": 0,
+                "medium": 1,
+                "low": 2,
+            }
 
+            todays_todos.sort(
+                key=lambda todo: urgency_order.get(todo["urgency"], 99)
+            )
+        if todos:
+            urgency_order = {
+                "high": 0,
+                "medium": 1,
+                "low": 2,
+            }
+
+            todos.sort(
+                key=lambda todo: (
+                    todo["due_date"],
+                    urgency_order.get(todo["urgency"], 99)
+                )
+            )
         month_name = today.strftime("%B")
-
-        # -------------------------
-        # FIND TODOS FOR EACH DAY
-        # -------------------------
-
         for todo in todos:
-
-            # -------------------------
-            # DUE DATE
-            # -------------------------
 
             if (
                 todo["due_date_check"] == "True"
@@ -412,10 +381,6 @@ def home(request):
                         []
                     ).append(todo)
 
-            # -------------------------
-            # EVERY DAY
-            # -------------------------
-
             if todo["repeat"] == "everyday":
 
                 for day in range(
@@ -430,10 +395,6 @@ def home(request):
                         day,
                         []
                     ).append(todo)
-
-            # -------------------------
-            # WEEKLY
-            # -------------------------
 
             elif todo["repeat"] == "weekly":
 
@@ -460,10 +421,6 @@ def home(request):
                             []
                         ).append(todo)
 
-            # -------------------------
-            # MONTHLY
-            # -------------------------
-
             elif todo["repeat"] == "monthly":
 
                 if todo["day_of_month"] != "False":
@@ -479,10 +436,6 @@ def home(request):
                             day,
                             []
                         ).append(todo)
-
-            # -------------------------
-            # YEARLY
-            # -------------------------
 
             elif todo["repeat"] == "yearly":
 
@@ -508,10 +461,6 @@ def home(request):
                             yearly_day,
                             []
                         ).append(todo)
-
-        # -------------------------
-        # BUILD CALENDAR
-        # -------------------------
 
         raw_calendar = calendar.Calendar(
             firstweekday=6
@@ -543,10 +492,6 @@ def home(request):
                     })
 
             month_calendar.append(calendar_week)
-
-    # -------------------------
-    # NOT LOGGED IN
-    # -------------------------
 
     else:
         csv_path = None
