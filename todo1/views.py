@@ -657,7 +657,7 @@ def ai(request):
 
     try:
         client.list()
-    except (httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
+    except (httpx.ProxyError, httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
         return render(request, "ai.html", {
             "active_page": "ai",
             "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
