@@ -369,42 +369,16 @@ document.getElementById("dayTodoPopup").addEventListener(
     <h2 style="color: white; text-align: center;">You have no todos!!!</h2>
     <h2 style="color: white; text-align: center;">Good Job</h2>
     <div style="text-align: center;"><button id="celebrateBtn" class="button" style="text-align: center;">🎉 Celebrate!</button></div>
-
-    <div id="leftHorn" class="horn left-horn">
-        <div class="horn-mouth"></div>
-        <div class="horn-body"></div>
-        <div class="horn-bell"></div>
-    </div>
-
-    <div id="rightHorn" class="horn right-horn">
-        <div class="horn-mouth"></div>
-        <div class="horn-body"></div>
-        <div class="horn-bell"></div>
-    </div>
-
-
-
+    <div id="leftHorn" class="horn">📯</div>
+    <div id="rightHorn" class="horn">📯</div>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 {% endif %}
 {% if not todos and all_todos %}
     <h2 style="color: white; text-align: center;">You have no todos today!!!</h2>
     <h2 style="color: white; text-align: center;">Good Job</h2>
     <div style="text-align: center;"><button id="celebrateBtn" class="button" style="text-align: center;">🎉 Celebrate!</button></div>
-
-    <div id="leftHorn" class="horn left-horn">
-        <div class="horn-mouth"></div>
-        <div class="horn-body"></div>
-        <div class="horn-bell"></div>
-    </div>
-
-    <div id="rightHorn" class="horn right-horn">
-        <div class="horn-mouth"></div>
-        <div class="horn-body"></div>
-        <div class="horn-bell"></div>
-    </div>
-
-
-
+    <div id="leftHorn" class="horn">📯</div>
+    <div id="rightHorn" class="horn">📯</div>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 {% endif %}
 <h1 style="color: white; text-align: center;">Try making a new todo here!!!</h1>
@@ -417,20 +391,60 @@ document.getElementById("dayTodoPopup").addEventListener(
 </form>
 <h1 style="color: white; text-align: center;">pls turn on notifications on the accounts tab</h1>
 {% else %}
-<div style="color: white; text-align: center;">
-    <h1 style="color: white; text-align: center;">info and pictures and stuff</h1>
-    <h2 style="color: white; text-align: center;">sign up here</h2>
-    <form action="{% url 'signup' %}" method="post">
-        {% csrf_token %}
-        <button class="button" type="submit">Sign Up</button>
-</form>
-<h2 style="color: white;">or if you are already with us login in here</h2>
-<form action="{% url 'login' %}" method="post">
-    {% csrf_token %}
-    <button class="button" type="submit">Login</button>
-</form>
+{% load static %}
+
+<div class="knox-welcome">
+
+    <div class="knox-welcome-card">
+
+        <div class="knox-logo-wrapper">
+            <img
+                src="{% static 'todo1/icons/icon-192.png' %}"
+                alt="Knox logo"
+                class="knox-logo"
+            >
+        </div>
+
+        <p class="knox-eyebrow">YOUR PERSONAL TODO ASSISTANT</p>
+
+        <h1 class="knox-title">
+            Hi, I'm Knox 👋
+        </h1>
+
+        <p class="knox-subtitle">
+            Your personal AI assistant for getting things done.
+        </p>
+
+        <p class="knox-description">
+            Got a lot on your plate? Need a little help staying organized?
+            Give Knox a shot and let's turn those todos into done-tos.
+        </p>
+
+        <div class="knox-actions">
+
+            <form action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+                <button class="button knox-button" type="submit">
+                    Get Started
+                </button>
+            </form>
+
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <button class="button knox-button knox-login-button" type="submit">
+                    I Already Have an Account
+                </button>
+            </form>
+
+        </div>
+
+        <p class="knox-footer">
+            Ready to get organized? Knox is ready when you are. ✨
+        </p>
+
+    </div>
+
 </div>
-<h1 style="color: white; text-align: center;">pls turn on notifications on the accounts tab</h1>
 {% endif %}
 <script>
 const button = document.getElementById("celebrateBtn");
