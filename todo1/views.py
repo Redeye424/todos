@@ -11,7 +11,7 @@ from .models import ChatMessage
 from webpush import send_user_notification
 import json
 from .forms import SignUpForm
-from .models import Profile, PushSubscription
+from .models import Profile, PushSubscription, Todo
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -26,6 +26,9 @@ from .scheduler import titles_and_bodies
 import httpx
 import django.http
 import calendar
+from django.http import HttpResponse
+from django.contrib import messages
+
 
 def service_worker(request):
     response = FileResponse(
@@ -698,3 +701,76 @@ def about_us(request):
     return render(request, "about_us.html", {
         "active_page": "about_us",
     })
+
+@login_required
+def export_todos(request):
+    csv_path = user_csv_path(request.user)
+
+    if not csv_path.exists():
+        create_user_csv(request.user)
+
+    with open(csv_path, newline="", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        todos = list(reader)
+
+    response = HttpResponse(
+        json.dumps(todos, indent=4),
+        content_type="application/json"
+    )
+
+    response["Content-Disposition"] = 'attachment; filename="todos.json"'
+
+    return response
+
+@login_required
+def import_todos(request):
+
+    if request.method != "POST":
+        messages.error(request, "Invalid request.")
+        return redirect("accounts")
+
+    uploaded_file = request.FILES.get("todo_file")
+
+    if not uploaded_file:
+        messages.error(request, "Please choose a JSON file first.")
+        return redirect("accounts")
+
+    try:
+        data = json.load(uploaded_file)
+
+        if not isinstance(data, list):
+            raise ValueError("Invalid todo format")
+
+        csv_path = user_csv_path(request.user)
+
+        create_user_csv(request.user)
+
+        with open(csv_path, "a", newline="", encoding="utf-8") as csv_file:
+
+            writer = csv.writer(csv_file)
+
+            for item in data:
+
+                writer.writerow([
+                    item.get("title", ""),
+                    item.get("description", ""),
+                    item.get("urgency", ""),
+                    item.get("due_date_check", "False"),
+                    item.get("due_date", "False"),
+                    item.get("repeat_check", "False"),
+                    item.get("repeat", "False"),
+                    item.get("day_of_week", "False"),
+                    item.get("day_of_month", "False"),
+                    item.get("yearly_day", "False"),
+                    item.get("yearly_month", "False"),
+                    item.get("time", ""),
+                    item.get("when_made", ""),
+                    item.get("done", "False"),
+                ])
+
+        messages.success(request, "Todos imported successfully!")
+
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+        messages.error(request, "That file is not a valid Todos JSON file.")
+
+    return redirect("accounts")

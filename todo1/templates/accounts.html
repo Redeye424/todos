@@ -69,6 +69,46 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 </script>
 
+<h2 style="margin-top: 40px;">Manage Your Todos</h2>
+
+<a href="{% url 'export_todos' %}" class="button">
+    Export Todos
+</a>
+
+<form
+    method="POST"
+    action="{% url 'import_todos' %}"
+    enctype="multipart/form-data"
+    style="display: inline-block; margin-left: 10px;"
+>
+    {% csrf_token %}
+
+    <label for="todoFile" class="button" style="cursor: pointer;">
+        Import Todos
+    </label>
+
+    <input
+        type="file"
+        id="todoFile"
+        name="todo_file"
+        accept=".json"
+        style="display: none;"
+        onchange="this.form.submit();"
+    >
+</form>
+
+{% if messages %}
+    {% for message in messages %}
+        <p style="
+            color: {% if message.tags == 'success' %}limegreen{% else %}red{% endif %};
+            text-align: center;
+            font-weight: bold;
+        ">
+            {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}
+
 <script>
 async function subscribeUser() {
 

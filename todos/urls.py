@@ -39,4 +39,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path("save-webpush/", views.save_webpush, name="save_webpush"),
+
+    path("todos/export/", views.export_todos, name="export_todos"),
+    path("todos/import/", views.import_todos, name="import_todos"),
 ]
