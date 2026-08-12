@@ -605,7 +605,7 @@ def ai(request):
     except (httpx.ProxyError, httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
         return render(request, "ai.html", {
             "active_page": "ai",
-            "response": "The AI is offline right now because it is running on a old laptop thank you for trying my ai tho"
+            "response": "Knox is offline right now because it is running on my old laptop checkout about Knox for more info!"
         })
     
     if request.method == "POST":
@@ -692,4 +692,9 @@ def ai(request):
     return render(request, "ai.html", {
         "active_page": "ai",
         "response": response_to_user,
+    })
+
+def about_us(request):
+    return render(request, "about_us.html", {
+        "active_page": "about_us",
     })

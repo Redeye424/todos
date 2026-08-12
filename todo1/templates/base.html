@@ -79,7 +79,7 @@ if ("serviceWorker" in navigator) {
                 style="font-weight: bold;" 
                 class="tab {% if active_page == 'ai' %}active{% endif %}"
                 onclick="navigate(this, '{% url 'ai' %}')">
-                ai
+                Knox
             </button>
 
 
@@ -88,7 +88,16 @@ if ("serviceWorker" in navigator) {
                 style="font-weight: bold;" 
                 class="tab {% if active_page == 'accounts' %}active{% endif %}"
                 onclick="navigate(this, '{% url 'accounts' %}')">
-                account
+                Account
+            </button>
+
+
+            <button 
+                type="button"
+                style="font-weight: bold;" 
+                class="tab {% if active_page == 'about_us' %}active{% endif %}"
+                onclick="navigate(this, '{% url 'about_us' %}')">
+                About Knox
             </button>
 
     </div>

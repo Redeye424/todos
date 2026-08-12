@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.home, name='home'),
 
     path("accounts/signup/", views.signup, name="signup"),
+    path("about_us", views.about_us, name="about_us"),
 
     path("service-worker.js", views.service_worker, name="service_worker"),
     path("accounts/login/", views.CustomLoginView.as_view(), name="login"),
