@@ -600,7 +600,7 @@ def ai(request):
     response_to_user = "hello how can I help with your todos today!"
     client = Client(
         host="http://shawnvivobook.tail5fbbe2.ts.net:11434",
-                        timeout=30.0,
+                        timeout=15.0,
                         )
 
     try:
