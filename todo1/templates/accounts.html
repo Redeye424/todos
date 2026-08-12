@@ -14,16 +14,45 @@
         Logout
     </button>
 </form>
-<div id="notificationStuff" style="display: none;">
-    <h2 style="text-align: center; display: none; color: white;" id="iphone_os_h2">
+
+<h2 id="iphone_os_h2" style="text-align: center; color: white; display: none;">
     <strong>Install the App on Your iPhone</strong><br><br>
+
     1. Open this website in <strong>Safari</strong>.<br>
     2. Tap the <strong>Share</strong> button (the square with the ↑ arrow).<br>
     3. Scroll down and tap <strong>Add to Home Screen</strong>.<br>
     4. If you see <strong>Open as Web App</strong>, make sure it is enabled.<br>
     5. Tap <strong>Add</strong>.<br>
     6. Open the app from your Home Screen, then tap <strong>Turn On Notifications</strong>.
-    </h2>
+</h2>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const iphoneInstructions = document.getElementById("iphone_os_h2");
+
+    if (!iphoneInstructions) {
+        console.error("iphone_os_h2 element not found");
+        return;
+    }
+
+    const isIOS =
+        /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    console.log("User Agent:", navigator.userAgent);
+    console.log("Platform:", navigator.platform);
+    console.log("Touch Points:", navigator.maxTouchPoints);
+    console.log("Detected iOS:", isIOS);
+
+    if (isIOS) {
+        iphoneInstructions.style.display = "block";
+    } else {
+        iphoneInstructions.style.display = "none";
+    }
+});
+</script>
+<div id="notificationStuff" style="display: none;">
     <h2>turn on notifications here</h2>
 
     <button class="button" onclick="subscribeUser()">
