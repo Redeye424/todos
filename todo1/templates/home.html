@@ -463,6 +463,16 @@ document.getElementById("dayTodoPopup").addEventListener(
                     </button>
                 </form>
 
+                <form action="{% url 'test_notification' %}" method="post">
+                    {% csrf_token %}
+                    <button
+                        class="button"
+                        type="submit"
+                    >
+                        Test Notification
+                    </button>
+                </form>
+
             </div>
 
         </div>
