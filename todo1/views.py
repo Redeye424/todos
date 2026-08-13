@@ -54,14 +54,11 @@ def test_notification(request):
 
         print("TEST PUSH SENT FOR:", request.user.username)
 
-        return HttpResponse("Test notification sent!")
+        return redirect("home")
 
     except Exception as e:
         print("TEST PUSH FAILED:", repr(e))
-        return HttpResponse(
-            f"Push failed: {type(e).__name__}: {e}",
-            status=500
-        )
+        return redirect("home")
 
 #@login_required
 #def save_webpush(request):

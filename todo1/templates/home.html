@@ -472,15 +472,17 @@ document.getElementById("dayTodoPopup").addEventListener(
 </div>
 
 {% endif %}
+<div style="text-align: center; content: center; margin-top: 20px;">
                 <form action="{% url 'test_notification' %}" method="post">
                     {% csrf_token %}
                     <button
                         class="button"
                         type="submit"
                     >
-                        Test Notification
+                        iphone Notifications
                     </button>
                 </form>
+</div>
 <script>
 const button = document.getElementById("celebrateBtn");
 
