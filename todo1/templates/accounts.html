@@ -144,31 +144,68 @@ document.addEventListener("DOMContentLoaded", function () {
 {% endif %}
 
 <script>
+async function registerServiceWorker() {
+    if (!("serviceWorker" in navigator)) {
+        throw new Error("Service workers are not supported by this browser.");
+    }
+
+    try {
+        const existing = await navigator.serviceWorker.getRegistration("/");
+
+        if (existing) {
+            return existing;
+        }
+
+        return await navigator.serviceWorker.register("/service-worker.js", {
+            scope: "/"
+        });
+    } catch (error) {
+        console.error("Service worker registration failed:", error);
+        throw error;
+    }
+}
+
+async function saveSubscription(subscription) {
+    const payload = subscription.toJSON ? subscription.toJSON() : subscription;
+
+    const response = await fetch("/save-webpush/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+        throw new Error(`Failed to save push subscription: ${responseText}`);
+    }
+
+    return responseText;
+}
+
 async function subscribeUser() {
 
-    // Check if browser supports notifications
     if (!("Notification" in window)) {
         alert("Notifications are not supported by this browser.");
         return;
     }
 
-    // Check if browser supports Service Workers
     if (!("serviceWorker" in navigator)) {
         alert("Service workers are not supported by this browser.");
         return;
     }
 
-    // iPhone/iPad detection
     const isIOS =
         /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    // Check if running as a Home Screen app
     const isStandalone =
         window.matchMedia("(display-mode: standalone)").matches ||
         window.navigator.standalone === true;
 
-    // iPhone/iPad requires Home Screen app for Web Push
     if (isIOS && !isStandalone) {
         alert(
             "On iPhone/iPad, first add Todos to your Home Screen.\n\n" +
@@ -182,47 +219,24 @@ async function subscribeUser() {
     }
 
     try {
+        const registration = await registerServiceWorker();
+        const readyRegistration = await navigator.serviceWorker.ready;
 
-        // Ask for notification permission
-        const permission = await Notification.requestPermission();
+        let subscription = await readyRegistration.pushManager.getSubscription();
 
-        if (permission !== "granted") {
-            alert("Notifications were not enabled.");
-            return;
+        if (!subscription) {
+            subscription = await readyRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(
+                    "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ"
+                )
+            });
         }
 
-        // Get service worker
-        const registration = await navigator.serviceWorker.ready;
-
-        // Subscribe to push notifications
-        const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-
-            applicationServerKey: urlBase64ToUint8Array(
-                "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ"
-            )
-        });
-
-        // Save subscription to Django
-        const response = await fetch("/save-webpush/", {
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-
-            body: JSON.stringify(subscription)
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to save push subscription.");
-        }
-
+        await saveSubscription(subscription);
         alert("Notifications enabled!");
 
     } catch (error) {
-
         console.error("Notification error:", error);
 
         alert(

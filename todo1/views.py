@@ -47,11 +47,18 @@ def save_webpush(request):
         }, status=400)
 
     try:
-        data = json.loads(request.body)
+        data = json.loads(request.body or "{}")
 
-        endpoint = data["endpoint"]
-        auth = data["keys"]["auth"]
-        p256dh = data["keys"]["p256dh"]
+        if not isinstance(data, dict):
+            raise ValueError("Expected a JSON object")
+
+        endpoint = data.get("endpoint")
+        keys = data.get("keys") or {}
+        auth = keys.get("auth")
+        p256dh = keys.get("p256dh")
+
+        if not endpoint or not auth or not p256dh:
+            raise ValueError("Missing endpoint or keys in push subscription payload")
 
         subscription, created = SubscriptionInfo.objects.update_or_create(
             endpoint=endpoint,
@@ -73,7 +80,7 @@ def save_webpush(request):
             "success": True
         })
 
-    except (KeyError, json.JSONDecodeError) as e:
+    except (TypeError, ValueError, json.JSONDecodeError) as e:
 
         return JsonResponse({
             "success": False,
