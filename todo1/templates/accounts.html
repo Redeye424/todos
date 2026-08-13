@@ -217,8 +217,53 @@ async function subscribeUser() {
 
         return;
     }
-
     try {
+        const registration = await registerServiceWorker();
+
+        console.log("SW registration:", registration);
+
+        const readyRegistration = await navigator.serviceWorker.ready;
+
+        console.log("SW ready:", readyRegistration);
+        console.log("PushManager:", readyRegistration.pushManager);
+
+        let subscription = await readyRegistration.pushManager.getSubscription();
+
+        console.log("Existing subscription:", subscription);
+
+        if (!subscription) {
+            console.log("Creating new subscription...");
+
+            subscription = await readyRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(
+                    "BHekIsfAotwpVjD-UKdhs2Sg3y50S-4nQAfOWNa9RUQ0AKZ8ITeCs1bMycIIxBxIa9QCBynwaVoHeDQZiFOK1RQ"
+                )
+            });
+
+            console.log("NEW SUBSCRIPTION:", subscription);
+            console.log("SUBSCRIPTION JSON:", subscription.toJSON());
+        }
+
+        await saveSubscription(subscription);
+
+        console.log("Subscription successfully saved!");
+
+        alert("Notifications enabled!");
+
+    } catch (error) {
+        console.error("NOTIFICATION FAILURE:", error);
+        console.error("Name:", error.name);
+        console.error("Message:", error.message);
+        console.error("Stack:", error.stack);
+
+        alert(
+            "Notification error\n\n" +
+            error.name + "\n" +
+            error.message
+        );
+    }
+    /*try {
         const registration = await registerServiceWorker();
         const readyRegistration = await navigator.serviceWorker.ready;
 
@@ -243,7 +288,7 @@ async function subscribeUser() {
             "Something went wrong while enabling notifications.\n\n" +
             error.message
         );
-    }
+    }*/
 }
 
 
