@@ -6,14 +6,45 @@
 {% block content %}
 
 <div style="color:white;text-align:center;">
-<h2  style="padding-top: 15%;">logout here</h2>
+<h2  style="padding-top: 15%;">Logout</h2>
 <form method="POST" action="{% url 'logout' %}">
     {% csrf_token %}
     <input type="hidden" name="action" value="logout">
     <button class="button" type="submit">
-        Logout
+        escape
     </button>
 </form>
+{% if user.is_authenticated%}
+<h2>Make a new account</h2>
+<form method="POST" action="{% url 'signup' %}">
+    {% csrf_token %}
+    <button class="button" type="submit">
+        More victims
+    </button>
+</form>
+
+<h2>Swap accounts</h2>
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    <button class="button" type="submit">
+        Double The Pain
+    </button>
+</form>
+{% else %}
+<form method="POST" action="{% url 'signup' %}">
+    {% csrf_token %}
+    <button class="button" type="submit">
+        Join Now
+    </button>
+</form>
+
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    <button class="button" type="submit">
+        Hop Back In
+    </button>
+</form>
+{% endif %}
 
 <h2 id="iphone_os_h2" style="text-align: center; color: white; display: none;">
     <strong>Install the App on Your iPhone</strong><br><br>
@@ -52,6 +83,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+<button class="button" onclick="subscribeUser()">
+    Enable Notifications
+</button>
 <div id="notificationStuff" style="display: none;">
     <h2>turn on notifications here</h2>
 

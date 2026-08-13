@@ -598,20 +598,22 @@ def ai(request):
     df_todos = pd.read_csv(user_csv_path(request.user))
 
     response_to_user = "hello how can I help with your todos today!"
-    client = Client(
-        host="http://shawnvivobook.tail5fbbe2.ts.net:11434",
-                        timeout=15.0,
-                        )
-
-    try:
-        client.list()
-    except (httpx.ProxyError, httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
-        return render(request, "ai.html", {
-            "active_page": "ai",
-            "response": "Knox is offline right now because it is running on my old laptop checkout about Knox for more info!"
-        })
     
     if request.method == "POST":
+
+        client = Client(
+            host="http://shawnvivobook.tail5fbbe2.ts.net:11434",
+                            timeout=10.0,
+                            )
+
+        try:
+            client.list()
+        except (httpx.ProxyError, httpx.ConnectError, httpx.ConnectTimeout, httpx.ReadTimeout, ConnectionError):
+            return render(request, "ai.html", {
+                "active_page": "ai",
+                "response": "Knox is offline right now because it is running on my old laptop checkout about Knox for more info!"
+            })
+
         user_message = request.POST.get("user_message")
 
         
