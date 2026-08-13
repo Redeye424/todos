@@ -42,4 +42,9 @@ urlpatterns = [
 
     path("todos/export/", views.export_todos, name="export_todos"),
     path("todos/import/", views.import_todos, name="import_todos"),
+    path(
+    "test-notification/",
+    views.test_notification,
+    name="test_notification"
+    ),
 ]

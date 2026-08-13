@@ -38,6 +38,31 @@ def service_worker(request):
     response["Service-Worker-Allowed"] = "/"
     return response
 
+
+@login_required
+def test_notification(request):
+    try:
+        send_user_notification(
+            user=request.user,
+            payload={
+                "head": "TEST NOTIFICATION",
+                "body": "Your Django push notification is working!",
+                "icon": "/static/todo1/icons/icon-192.png",
+            },
+            ttl=3600,
+        )
+
+        print("TEST PUSH SENT FOR:", request.user.username)
+
+        return HttpResponse("Test notification sent!")
+
+    except Exception as e:
+        print("TEST PUSH FAILED:", repr(e))
+        return HttpResponse(
+            f"Push failed: {type(e).__name__}: {e}",
+            status=500
+        )
+
 #@login_required
 #def save_webpush(request):
 
